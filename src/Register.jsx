@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { TextField, Button, Container, Typography, Paper, Checkbox, FormControlLabel, Link } from '@mui/material';
+import { TextField, Button, Container, Typography, Paper } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import api from './services/api'; // Import the centralized Axios instance
 
-const Login = () => {
+const Register = () => {
+    const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -12,14 +13,24 @@ const Login = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
-            const response = await api.post('/login', { email, password });
+            const response = await api.post('/register', {
+                name,
+                email,
+                password,
+            });
 
             if (response.data.token) {
                 localStorage.setItem('auth_token', response.data.token);
-                navigate('/users');  // Redirect after login
+                navigate('/users');  // Redirect after registration
             }
         } catch (error) {
-            setError('Invalid login credentials');
+            if (error.response && error.response.data) {
+                // Log the error details
+                console.error('Registration error:', error.response.data);
+                setError(JSON.stringify(error.response.data));
+            } else {
+                setError('Registration failed');
+            }
         }
     };
 
@@ -30,7 +41,7 @@ const Login = () => {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                backgroundImage: 'url(/back.png)', 
+                backgroundImage: 'url(/back.png)', // Ensure this path is correct
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
                 position: 'relative'
@@ -43,7 +54,7 @@ const Login = () => {
                     left: 0,
                     width: '100%',
                     height: '100%',
-                    background: 'rgba(0, 0, 0, 0.7)', 
+                    background: 'rgba(0, 0, 0, 0.7)', // Dark overlay to highlight the form box
                     zIndex: 1
                 }}
             />
@@ -52,15 +63,29 @@ const Login = () => {
                     elevation={5} 
                     style={{ 
                         padding: '30px', 
-                        background: 'linear-gradient(to right, #8e2de2, #4a00e0)', 
+                        background: 'linear-gradient(to right, #8e2de2, #4a00e0)', // Purple to blue gradient
                         borderRadius: '15px',
                         color: '#FFFFFF'
                     }}
                 >
                     <Typography variant="h4" component="h1" gutterBottom style={{ color: '#FFFFFF', fontWeight: 'bold', textAlign: 'center' }}>
-                        Login
+                        Register
                     </Typography>
                     <form onSubmit={handleSubmit}>
+                        <TextField
+                            label="Name"
+                            fullWidth
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            margin="normal"
+                            variant="outlined"
+                            style={{ 
+                                backgroundColor: '#FFFFFF', 
+                                borderRadius: '5px',
+                                marginBottom: '15px', // Adds margin for better spacing
+                                boxShadow: '0 3px 5px rgba(0,0,0,0.2)' // Adds shadow for depth
+                            }} // White background for input fields with rounded corners and shadow
+                        />
                         <TextField
                             label="Email"
                             fullWidth
@@ -71,9 +96,9 @@ const Login = () => {
                             style={{ 
                                 backgroundColor: '#FFFFFF', 
                                 borderRadius: '5px',
-                                marginBottom: '15px', 
-                                boxShadow: '0 3px 5px rgba(0,0,0,0.2)' 
-                            }}
+                                marginBottom: '15px', // Adds margin for better spacing
+                                boxShadow: '0 3px 5px rgba(0,0,0,0.2)' // Adds shadow for depth
+                            }} // White background for input fields with rounded corners and shadow
                         />
                         <TextField
                             label="Password"
@@ -86,27 +111,14 @@ const Login = () => {
                             style={{ 
                                 backgroundColor: '#FFFFFF', 
                                 borderRadius: '5px',
-                                marginBottom: '15px', 
-                                boxShadow: '0 3px 5px rgba(0,0,0,0.2)' 
-                            }}
-                        />
-                        <FormControlLabel
-                            control={<Checkbox color="primary" />}
-                            label="Remember me"
-                            style={{ marginTop: '15px', color: '#FFFFFF' }}
+                                marginBottom: '15px', // Adds margin for better spacing
+                                boxShadow: '0 3px 5px rgba(0,0,0,0.2)' // Adds shadow for depth
+                            }} // White background for input fields with rounded corners and shadow
                         />
                         <Button variant="contained" color="primary" type="submit" fullWidth style={{ marginTop: '20px', padding: '10px 0', fontWeight: 'bold' }}>
-                            Login
+                            Register
                         </Button>
                         {error && <Typography color="error" style={{ marginTop: '10px' }}>{error}</Typography>}
-                        <div style={{ marginTop: '15px', display: 'flex', justifyContent: 'space-between' }}>
-                            <Link component="button" variant="body2" style={{ color: '#FFFFFF' }} onClick={() => navigate('/register')}>
-                                Don't have an account? Register
-                            </Link>
-                            <Link component="button" variant="body2" style={{ color: '#FFFFFF' }} onClick={() => navigate('/reset-password')}>
-                                Forgot Password?
-                            </Link>
-                        </div>
                     </form>
                 </Paper>
             </Container>
@@ -114,4 +126,4 @@ const Login = () => {
     );
 };
 
-export default Login;
+export default Register;

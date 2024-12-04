@@ -47,6 +47,7 @@ const Register = () => {
                 position: 'relative'
             }}
         >
+            {/* Background Overlay */}
             <div
                 style={{
                     position: 'absolute',
@@ -54,24 +55,28 @@ const Register = () => {
                     left: 0,
                     width: '100%',
                     height: '100%',
-                    background: 'rgba(0, 0, 0, 0.7)', // Dark overlay to highlight the form box
+                    background: 'rgba(0, 0, 0, 0.7)',  // Semi-transparent black overlay
                     zIndex: 1
                 }}
             />
             <Container maxWidth="sm" style={{ zIndex: 2 }}>
+                {/* Register Box Start */}
                 <Paper 
                     elevation={5} 
                     style={{ 
-                        padding: '30px', 
-                        background: 'linear-gradient(to right, #8e2de2, #4a00e0)', // Purple to blue gradient
-                        borderRadius: '15px',
-                        color: '#FFFFFF'
+                        padding: '40px', 
+                        background: 'linear-gradient(to right, #8e2de2, #4a00e0)', 
+                        borderRadius: '10px',
+                        color: '#FFFFFF',
+                        
                     }}
                 >
+                    {/* Register Title */}
                     <Typography variant="h4" component="h1" gutterBottom style={{ color: '#FFFFFF', fontWeight: 'bold', textAlign: 'center' }}>
                         Register
                     </Typography>
                     <form onSubmit={handleSubmit}>
+                        {/* Name Input */}
                         <TextField
                             label="Name"
                             fullWidth
@@ -85,7 +90,9 @@ const Register = () => {
                                 marginBottom: '15px', // Adds margin for better spacing
                                 boxShadow: '0 3px 5px rgba(0,0,0,0.2)' // Adds shadow for depth
                             }} // White background for input fields with rounded corners and shadow
+
                         />
+                        {/* Email Input */}
                         <TextField
                             label="Email"
                             fullWidth
@@ -100,6 +107,7 @@ const Register = () => {
                                 boxShadow: '0 3px 5px rgba(0,0,0,0.2)' // Adds shadow for depth
                             }} // White background for input fields with rounded corners and shadow
                         />
+                        {/* Password Input */}
                         <TextField
                             label="Password"
                             fullWidth
@@ -115,12 +123,15 @@ const Register = () => {
                                 boxShadow: '0 3px 5px rgba(0,0,0,0.2)' // Adds shadow for depth
                             }} // White background for input fields with rounded corners and shadow
                         />
+                        {/* Register Button */}
                         <Button variant="contained" color="primary" type="submit" fullWidth style={{ marginTop: '20px', padding: '10px 0', fontWeight: 'bold' }}>
                             Register
                         </Button>
+                        {/* Error Message */}
                         {error && <Typography color="error" style={{ marginTop: '10px' }}>{error}</Typography>}
                     </form>
                 </Paper>
+                {/* Register Box End */}
             </Container>
         </div>
     );

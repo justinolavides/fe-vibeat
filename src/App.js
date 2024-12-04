@@ -18,6 +18,7 @@ function App() {
                         <UserList />
                     </PrivateRoute>
                 } />
+                <Route path="/contact" element={<Contact />} /> {/* Add the contact route */}
                 <Route path="*" element={<Navigate to="/" />} /> {/* Redirect to login by default */}
             </Routes>
         </Router>

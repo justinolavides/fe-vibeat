@@ -1,14 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TextField, Button, Container, Typography, Paper, Checkbox, FormControlLabel, Link, Box, AppBar, Toolbar } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import api from './services/api'; // Import the centralized Axios instance
 
 const Home = () => {
+    const location = useLocation();
     const [showLogin, setShowLogin] = useState(false); // State to control login form visibility
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
+
+    useEffect(() => {
+        if (location.state && location.state.showLogin) {
+            setShowLogin(true);
+        }
+    }, [location.state]);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -34,10 +41,11 @@ const Home = () => {
 
     return (
         <>
-            <AppBar position="static">
+            <AppBar position="static" style={{ backgroundColor: 'rgba(50, 0, 0, 0.3)' }}>
                 <Toolbar>
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} onClick={handleHomeClick} style={{ cursor: 'pointer' }}>
-                        ViBeat
+                        <span style={{ color: '#FFFFFF', fontWeight: 'bold', textShadow: '4px 2px', fontSize: '50px' }}>VIB</span>
+                        <span style={{ color: '#000000', fontWeight: 'bold', textShadow: '4px 2px', fontSize: '50px' }}>EAT</span>
                     </Typography>
                     <Button color="inherit" onClick={handleHomeClick}>Home</Button>
                     <Button 
@@ -66,7 +74,7 @@ const Home = () => {
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                     position: 'relative',
-                    padding: '0 50px'  // Adjust padding for spacing
+                    padding: '0 50px',  // Adjust padding for spacing
                 }}
             >
                 <div
@@ -83,8 +91,9 @@ const Home = () => {
                 
                 {!showLogin && (
                     <Container maxWidth="sm" style={{ zIndex: 2 }}>
-                        <Typography variant="h3" component="h1" gutterBottom style={{ color: '#FFFFFF', fontWeight: 'bold', textAlign: 'center', fontFamily: 'Times New Roman, Times, serif' }}>
-                            ViBeat
+                        <Typography variant="h3" component="h1" gutterBottom style={{ textAlign: 'center', fontFamily: 'Times New Roman, Times, serif' }}>
+                            <span style={{ color: '#FFFFFF', fontWeight: 'bold', textShadow: '4px 2px', fontSize: '50px' }}>VIB</span>
+                            <span style={{ color: '#000000', fontWeight: 'bold', textShadow: '4px 2px', fontSize: '50px' }}>EAT</span>
                         </Typography>
                         <Box textAlign="left" mb={2} ml={1}>
                             <Typography variant="h6" component="p" style={{ color: '#FFFFFF', fontWeight: 'bold', textAlign: 'left', fontFamily: 'Times New Roman, Times, serif' }}>
@@ -166,9 +175,9 @@ const Home = () => {
                         alt="Home Logo"
                         style={{
                             zIndex: 2,
-                            maxWidth: '200px',
+                            maxWidth: '500px',
                             marginLeft: '20px',
-                            height: 'auto',
+                            height: '500px',
                             borderRadius: '10px'
                         }}
                     />

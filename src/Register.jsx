@@ -21,7 +21,7 @@ const Register = () => {
 
             if (response.data.token) {
                 localStorage.setItem('auth_token', response.data.token);
-                navigate('/users');  // Redirect after registration
+                navigate('/admin');  // Redirect after registration
             }
         } catch (error) {
             if (error.response && error.response.data) {

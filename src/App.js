@@ -14,7 +14,7 @@ function App() {
             <Routes>
                 <Route path="/" element={<Login />} />
                 <Route path="/register" element={<Register />} /> {/* Add the registration route */}
-                <Route path="/users" element={
+                <Route path="/admin" element={
                     <PrivateRoute>
                         <UserList />
                     </PrivateRoute>

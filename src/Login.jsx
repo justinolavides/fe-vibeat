@@ -199,4 +199,7 @@ const Home = () => {
 };
 
 export default Home;
+<<<<<<< HEAD
 
+=======
+>>>>>>> ResetPassword

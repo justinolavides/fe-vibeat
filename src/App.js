@@ -5,6 +5,7 @@ import UserList from './UserList';
 import PrivateRoute from './PrivateRoute';
 import Register from './Register'; // Import the registration component
 import logo from './logo.svg';
+import Contact from './Contact';
 import './App.css';
 
 function App() {

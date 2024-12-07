@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TextField, Button, Container, Typography, Paper } from '@mui/material';
+import { TextField, Button, Container, Typography, Paper, Link } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import api from './services/api'; // Import the centralized Axios instance
 
@@ -32,6 +32,10 @@ const Register = () => {
                 setError('Registration failed');
             }
         }
+    };
+
+    const handleLoginRedirect = () => {
+        navigate('/', { state: { showLogin: true } });
     };
 
     return (
@@ -130,6 +134,13 @@ const Register = () => {
                         {/* Error Message */}
                         {error && <Typography color="error" style={{ marginTop: '10px' }}>{error}</Typography>}
                     </form>
+                    {/* Link to Login Page */}
+                    <Typography variant="body2" style={{ marginTop: '20px', textAlign: 'center', color: '#FFFFFF' }}>
+                        Already have an account?{' '}
+                        <Link component="button" variant="body2" style={{ color: '#FFFFFF' }} onClick={handleLoginRedirect}>
+                            Login Here
+                        </Link>
+                    </Typography>
                 </Paper>
                 {/* Register Box End */}
             </Container>

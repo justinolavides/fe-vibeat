@@ -24,7 +24,7 @@ const Home = () => {
 
             if (response.data.token) {
                 localStorage.setItem('auth_token', response.data.token);
-                navigate('/users');  // Redirect after login
+                navigate('/admin');  // Redirect after login
             }
         } catch (error) {
             setError('Invalid login credentials');
@@ -199,7 +199,3 @@ const Home = () => {
 };
 
 export default Home;
-<<<<<<< HEAD
-
-=======
->>>>>>> ResetPassword

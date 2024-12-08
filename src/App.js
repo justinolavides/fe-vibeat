@@ -5,9 +5,10 @@ import UserList from './UserList';
 import PrivateRoute from './PrivateRoute';
 import Register from './Register';
 import Contact from './Contact';
-import ForgotPassword from './ForgotPassword'; // Import ForgotPassword component
-import ResetPassword from './ResetPassword'; // Import ResetPassword component
-import MusicDashboard from './MusicDashboard'; // Import the MusicDashboard component
+import ForgotPassword from './ForgotPassword';
+import ResetPassword from './ResetPassword';
+import MusicDashboard from './MusicDashboard';
+import Profile from './Profile'; // Import Profile component
 import './App.css';
 
 function App() {
@@ -22,9 +23,10 @@ function App() {
                     </PrivateRoute>
                 } />
                 <Route path="/contact" element={<Contact />} />
-                <Route path="/music-dashboard" element={<MusicDashboard />} /> {/* Add the music dashboard route */}
-                <Route path="/forgot-password" element={<ForgotPassword />} /> {/* Add the forgot password route */}
-                <Route path="/reset-password/:token" element={<ResetPassword />} /> {/* Add the reset password route */}
+                <Route path="/music-dashboard" element={<MusicDashboard />} />
+                <Route path="/profile" element={<Profile />} /> {/* Add the profile route */}
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
                 <Route path="*" element={<Navigate to="/" />} />
             </Routes>
         </Router>

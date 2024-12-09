@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { Container, TextField, Button, Box, Typography, Paper, Avatar, Alert, CircularProgress, Dialog, DialogTitle, DialogContent, DialogActions, Grid } from '@mui/material';
-import api from './services/api'; // Import your axios instance
+import { useNavigate } from 'react-router-dom';
+import { Container, TextField, Button, Box, Typography, Paper, Avatar, Alert, CircularProgress, Dialog, DialogTitle, DialogContent, DialogActions, Grid, FormHelperText } from '@mui/material';
+import api from './services/api';
 
-const Profile = () => {
+const Profile = ({ onProfileUpdate }) => {
     const [profile, setProfile] = useState({ name: '', email: '', bio: '', avatar: '/static/images/avatar/1.jpg' });
     const [message, setMessage] = useState('');
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [openDialog, setOpenDialog] = useState(false);
     const [selectedAvatar, setSelectedAvatar] = useState('/static/images/avatar/1.jpg');
+    const [error, setError] = useState('');
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -17,7 +20,7 @@ const Profile = () => {
                 setProfile(response.data);
                 setSelectedAvatar(response.data.avatar || '/static/images/avatar/1.jpg');
             } catch (error) {
-                console.error('Error fetching profile:', error);
+                setError('Failed to fetch profile.');
             } finally {
                 setLoading(false);
             }
@@ -39,12 +42,24 @@ const Profile = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (!profile.name || !profile.email) {
+            setError('Name and Email are required.');
+            return;
+        }
+
         setSaving(true);
+        setError('');
         try {
             const response = await api.put('/user/profile', profile);
             setMessage(response.data.message);
+
+            // Update profile in parent component
+            onProfileUpdate({ name: profile.name, avatar: selectedAvatar });
+
+            // Redirect to dashboard
+            navigate('/music-dashboard');
         } catch (error) {
-            console.error('Error updating profile:', error);
+            setError('Error updating profile.');
         } finally {
             setSaving(false);
         }
@@ -112,6 +127,7 @@ const Profile = () => {
                             fullWidth
                             sx={{ backgroundColor: '#FFFFFF', borderRadius: '5px', mb: 2 }}
                         />
+                        {error && <FormHelperText error>{error}</FormHelperText>}
                         <Button type="submit" variant="contained" fullWidth sx={{ mt: 2, backgroundColor: '#27ae60', color: '#FFFFFF' }} disabled={saving}>
                             {saving ? 'Saving...' : 'Save'}
                         </Button>
@@ -147,8 +163,6 @@ const Profile = () => {
                     </Button>
                 </DialogActions>
             </Dialog>
-
-            <Typography variant="body2" sx={{ textAlign: 'center', color: '#FFFFFF', mt: 4 }}></Typography>
         </Container>
     );
 };

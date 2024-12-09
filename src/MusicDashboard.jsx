@@ -1,30 +1,29 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Container,
     Box,
     Typography,
+    Button,
+    AppBar,
+    Toolbar,
+    IconButton,
+    Avatar,
+    Menu,
+    MenuItem,
     TextField,
+    Grid,
     Paper,
     Table,
     TableBody,
     TableCell,
     TableHead,
     TableRow,
-    Avatar,
-    Grid,
-    Button,
-    AvatarGroup,
-    AppBar,
-    Toolbar,
-    IconButton,
-    Menu,
-    MenuItem,
     List,
     ListItem,
-    ListItemText
+    ListItemText,
 } from '@mui/material';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
-import api from './services/api'; // Import your axios instance
+import { useNavigate } from 'react-router-dom';
+import api from './services/api'; // Your axios instance
 
 const MusicDashboard = () => {
     const [music, setMusic] = useState([]);
@@ -86,6 +85,12 @@ const MusicDashboard = () => {
         setAnchorEl(null);
     };
 
+    const handleLogout = () => {
+        // Clear authentication data (e.g., token)
+        localStorage.removeItem('authToken'); // Example: remove token from localStorage
+        navigate('/'); // Navigate to homepage
+    };
+
     const handleNavigateToProfile = () => {
         setAnchorEl(null); // Close the menu
         navigate('/profile'); // Navigate to the Profile page
@@ -123,13 +128,13 @@ const MusicDashboard = () => {
                     >
                         <MenuItem onClick={handleNavigateToProfile}>Profile</MenuItem>
                         <MenuItem onClick={handleProfileMenuClose}>Settings</MenuItem>
-                        <MenuItem onClick={handleProfileMenuClose}>Logout</MenuItem>
+                        <MenuItem onClick={handleLogout}>Log Out</MenuItem>
                     </Menu>
                 </Toolbar>
             </AppBar>
 
             <Grid container spacing={3}>
-                {/* Left Column */}
+                {/* Left Column - Top Charts and Listen Again */}
                 <Grid item xs={12} md={3}>
                     <Box mb={3}>
                         <Typography variant="h6">Top Charts</Typography>
@@ -172,7 +177,7 @@ const MusicDashboard = () => {
                     </Box>
                 </Grid>
 
-                {/* Middle Column */}
+                {/* Middle Column - Music List */}
                 <Grid item xs={12} md={6}>
                     <Typography variant="h5" gutterBottom>
                         Music List
@@ -219,7 +224,7 @@ const MusicDashboard = () => {
                     </Paper>
                 </Grid>
 
-                {/* Right Column */}
+                {/* Right Column - Now Playing and Playlist */}
                 <Grid item xs={12} md={3}>
                     {nowPlaying && (
                         <Box mb={3}>

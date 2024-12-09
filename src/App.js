@@ -8,7 +8,8 @@ import Contact from './Contact';
 import ForgotPassword from './ForgotPassword';
 import ResetPassword from './ResetPassword';
 import MusicDashboard from './MusicDashboard';
-import Profile from './Profile'; // Import Profile component
+import Profile from './Profile';
+import Settings from './Settings'; // Import Settings component
 import './App.css';
 
 function App() {
@@ -33,7 +34,7 @@ function App() {
                 <Route path="/music-dashboard" element={<MusicDashboard userProfile={userProfile} />} />
                 <Route path="/profile" element={<Profile onProfileUpdate={handleProfileUpdate} userProfile={userProfile} />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
-                <Route path="/reset-password" element={<ResetPassword />} />
+                <Route path="/reset-password/:token" element={<ResetPassword />} />
                 <Route path="*" element={<Navigate to="/" />} />
             </Routes>
         </Router>

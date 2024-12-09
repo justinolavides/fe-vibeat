@@ -125,7 +125,7 @@ const Settings = () => {
                 </DialogActions>
             </Dialog>
 
-            {/* Theme Selection Dialog with Day and Night Themes */}
+            {/* Enhanced Theme Selection Dialog */}
             <Dialog open={openTheme} onClose={() => setOpenTheme(false)} maxWidth="md" fullWidth>
                 <DialogTitle>
                     Select Theme
@@ -162,6 +162,34 @@ const Settings = () => {
                             onClick={() => changeTheme('night')}
                         >
                             Night Theme
+                        </Button>
+                        <Button
+                            variant="contained"
+                            fullWidth
+                            sx={{
+                                backgroundColor: theme === 'solarized' ? '#002B36' : '#E0E0E0',
+                                color: theme === 'solarized' ? '#FFF' : '#8e8e8e',
+                                borderRadius: '25px',
+                                height: '50px',
+                                fontSize: '16px'
+                            }}
+                            onClick={() => changeTheme('solarized')}
+                        >
+                            Solarized Dark
+                        </Button>
+                        <Button
+                            variant="contained"
+                            fullWidth
+                            sx={{
+                                backgroundColor: theme === 'contrast' ? '#000' : '#E0E0E0',
+                                color: theme === 'contrast' ? '#FFF' : '#8e8e8e',
+                                borderRadius: '25px',
+                                height: '50px',
+                                fontSize: '16px'
+                            }}
+                            onClick={() => changeTheme('contrast')}
+                        >
+                            High Contrast
                         </Button>
                     </Box>
                 </DialogContent>

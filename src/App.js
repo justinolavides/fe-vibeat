@@ -9,7 +9,8 @@ import ForgotPassword from './ForgotPassword';
 import ResetPassword from './ResetPassword';
 import MusicDashboard from './MusicDashboard';
 import Profile from './Profile';
-import Settings from './Settings'; // Import Settings component
+import Settings from './Settings'; 
+import Playlist from './Playlist'; // Import Playlist component
 import './App.css';
 
 function App() {

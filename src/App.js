@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import Login from './Login';
 import UserList from './UserList';
@@ -12,6 +12,13 @@ import Profile from './Profile'; // Import Profile component
 import './App.css';
 
 function App() {
+    const [userProfile, setUserProfile] = useState({ name: '', email: '', bio: '', avatar: '/static/images/avatar/1.jpg' });
+
+    // Function to update profile data
+    const handleProfileUpdate = (updatedProfile) => {
+        setUserProfile(updatedProfile);
+    };
+
     return (
         <Router>
             <Routes>
@@ -23,8 +30,8 @@ function App() {
                     </PrivateRoute>
                 } />
                 <Route path="/contact" element={<Contact />} />
-                <Route path="/music-dashboard" element={<MusicDashboard />} />
-                <Route path="/profile" element={<Profile />} /> {/* Add the profile route */}
+                <Route path="/music-dashboard" element={<MusicDashboard userProfile={userProfile} />} />
+                <Route path="/profile" element={<Profile onProfileUpdate={handleProfileUpdate} userProfile={userProfile} />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
                 <Route path="*" element={<Navigate to="/" />} />

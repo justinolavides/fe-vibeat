@@ -19,15 +19,18 @@ const Home = () => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+        setError(''); // Clear previous errors
         try {
             const response = await api.post('/login', { email, password });
 
             if (response.data.token) {
                 localStorage.setItem('auth_token', response.data.token);
-                navigate('/admin');  // Redirect after login
+                navigate('/admin');  // Redirect after successful login
+            } else {
+                setError('Invalid login credentials'); // Show error if no token returned
             }
         } catch (error) {
-            setError('Invalid login credentials');
+            setError('An error occurred during login');
         }
     };
 
@@ -48,17 +51,6 @@ const Home = () => {
                         <span style={{ color: '#000000', fontWeight: 'bold', textShadow: '4px 2px', fontSize: '50px' }}>EAT</span>
                     </Typography>
                     <Button color="inherit" onClick={handleHomeClick}>Home</Button>
-                    <Button 
-                        color="inherit" 
-                        onClick={() => {
-                            const aboutSection = document.getElementById('about-section');
-                            if (aboutSection) {
-                                aboutSection.scrollIntoView({ behavior: 'smooth' });
-                            }
-                        }}
-                    >
-                        About
-                    </Button>
                     <Button color="inherit" onClick={() => navigate('/contact')}>Contact</Button>
                     <Button color="inherit" onClick={handleLoginClick}>Login</Button>
                 </Toolbar>

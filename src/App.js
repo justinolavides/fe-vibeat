@@ -24,7 +24,7 @@ function App() {
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/music-dashboard" element={<MusicDashboard />} /> {/* Add the music dashboard route */}
                 <Route path="/forgot-password" element={<ForgotPassword />} /> {/* Add the forgot password route */}
-                <Route path="/reset-password/:token" element={<ResetPassword />} /> {/* Add the reset password route */}
+                <Route path="/reset-password" element={<ResetPassword />} /> {/* Add the reset password route */}
                 <Route path="*" element={<Navigate to="/" />} />
             </Routes>
         </Router>

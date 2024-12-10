@@ -25,6 +25,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import api from './services/api';
 
+
 const Playlist = () => {
     const [music, setMusic] = useState([]);
     const [topCharts, setTopCharts] = useState([]);

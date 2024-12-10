@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, Button, Box, Paper, Typography, Dialog, DialogTitle, DialogContent, DialogActions, IconButton, Backdrop } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import CloseIcon from '@mui/icons-material/Close';
 import TextField from '@mui/material/TextField';
-import CircularProgress from '@mui/material/CircularProgress'; // Import CircularProgress
+import CircularProgress from '@mui/material/CircularProgress';
 
 const Settings = () => {
     const navigate = useNavigate();
@@ -31,7 +31,6 @@ const Settings = () => {
     const changeTheme = (newTheme) => {
         setTheme(newTheme);
         setOpenTheme(false);
-        // Logic to change the theme can be added here
     };
 
     const handleLogout = () => {
@@ -42,9 +41,30 @@ const Settings = () => {
         }, 1000); // Display the loading screen for 1 second
     };
 
+    const themeStyles = {
+        day: {
+            background: 'linear-gradient(to right, #007AFF, #5856D6)',
+            color: '#FFFFFF'
+        },
+        night: {
+            background: 'linear-gradient(to right, #000000, #434343)',
+            color: '#FFFFFF'
+        },
+        solarized: {
+            background: 'linear-gradient(to right, #002B36, #073642)',
+            color: '#FFFFFF'
+        }
+    };
+
+    useEffect(() => {
+        document.body.style.background = themeStyles[theme].background;
+        document.body.style.color = themeStyles[theme].color;
+        document.body.style.overflow = 'hidden';  // Disable scrolling on the body
+    }, [theme]);
+
     return (
-        <Container maxWidth="md" sx={{ mt: 4 }}>
-            <Paper elevation={3} sx={{ p: 5, background: 'linear-gradient(to right, #007AFF, #5856D6)', color: '#FFFFFF', borderRadius: '15px' }}>
+        <Container maxWidth="md" sx={{ mt: 4, minHeight: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center', color: themeStyles[theme].color }}>
+            <Paper elevation={3} sx={{ p: 5, borderRadius: '15px', color: themeStyles[theme].color, backgroundColor: 'rgba(255, 255, 255, 0.7)' }}>
                 <Typography variant="h4" gutterBottom sx={{ textAlign: 'center', fontWeight: 'bold' }}>Settings</Typography>
                 <Box display="flex" flexDirection="column" alignItems="center" gap={3}>
                     <Button
@@ -176,20 +196,6 @@ const Settings = () => {
                             onClick={() => changeTheme('solarized')}
                         >
                             Solarized Dark
-                        </Button>
-                        <Button
-                            variant="contained"
-                            fullWidth
-                            sx={{
-                                backgroundColor: theme === 'contrast' ? '#000' : '#E0E0E0',
-                                color: theme === 'contrast' ? '#FFF' : '#8e8e8e',
-                                borderRadius: '25px',
-                                height: '50px',
-                                fontSize: '16px'
-                            }}
-                            onClick={() => changeTheme('contrast')}
-                        >
-                            High Contrast
                         </Button>
                     </Box>
                 </DialogContent>

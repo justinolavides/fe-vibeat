@@ -3,13 +3,19 @@ import { useNavigate } from 'react-router-dom';
 import { Container, TextField, Button, Box, Typography, Paper, Avatar, Alert, CircularProgress, Dialog, DialogTitle, DialogContent, DialogActions, Grid, FormHelperText } from '@mui/material';
 import api from './services/api';
 
+const avatarOptions = [
+    '/static/images/avatar/1.jpg',
+    '/static/images/avatar/2.jpg',
+    '/static/images/avatar/3.jpg',
+    '/static/images/avatar/4.jpg',
+];
+
 const Profile = ({ onProfileUpdate }) => {
-    const [profile, setProfile] = useState({ name: '', email: '', bio: '', avatar: '/static/images/avatar/1.jpg' });
+    const [profile, setProfile] = useState({ name: '', email: '', bio: '', avatar: avatarOptions[0] });
     const [message, setMessage] = useState('');
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [openDialog, setOpenDialog] = useState(false);
-    const [selectedAvatar, setSelectedAvatar] = useState('/static/images/avatar/1.jpg');
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
@@ -18,7 +24,6 @@ const Profile = ({ onProfileUpdate }) => {
             try {
                 const response = await api.get('/user/profile');
                 setProfile(response.data);
-                setSelectedAvatar(response.data.avatar || '/static/images/avatar/1.jpg');
             } catch (error) {
                 setError('Failed to fetch profile.');
             } finally {
@@ -35,7 +40,6 @@ const Profile = ({ onProfileUpdate }) => {
     };
 
     const handleAvatarChange = (avatar) => {
-        setSelectedAvatar(avatar);
         setProfile({ ...profile, avatar });
         setOpenDialog(false);
     };
@@ -54,7 +58,7 @@ const Profile = ({ onProfileUpdate }) => {
             setMessage(response.data.message);
 
             // Update profile in parent component
-            onProfileUpdate({ name: profile.name, avatar: selectedAvatar });
+            onProfileUpdate({ name: profile.name, avatar: profile.avatar });
 
             // Redirect to dashboard
             navigate('/music-dashboard');
@@ -64,13 +68,6 @@ const Profile = ({ onProfileUpdate }) => {
             setSaving(false);
         }
     };
-
-    const avatarOptions = [
-        '/static/images/avatar/1.jpg',
-        '/static/images/avatar/2.jpg',
-        '/static/images/avatar/3.jpg',
-        '/static/images/avatar/4.jpg',
-    ];
 
     if (loading) {
         return (
@@ -87,7 +84,9 @@ const Profile = ({ onProfileUpdate }) => {
             <Box display="flex" flexDirection="row" justifyContent="space-between" alignItems="flex-start">
                 {/* Left Section */}
                 <Box display="flex" flexDirection="column" alignItems="center" width="40%">
-                    <Avatar alt="Profile Picture" src={selectedAvatar} sx={{ width: 120, height: 120, mb: 2, border: '2px solid #fff' }} />
+                    <Avatar alt="Profile Picture" src={profile.avatar} sx={{ width: 120, height: 120, mb: 2, border: '2px solid #fff' }} />
+                    <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#FFFFFF', mb: 2 }}>{profile.name}</Typography>
+                    <Typography variant="body1" sx={{ color: '#FFFFFF', mb: 2 }}>{profile.email}</Typography>
                     <Button variant="contained" onClick={() => setOpenDialog(true)} sx={{ mb: 1, backgroundColor: '#007AFF', color: '#FFFFFF' }}>
                         Choose Avatar
                     </Button>
@@ -151,7 +150,7 @@ const Profile = ({ onProfileUpdate }) => {
                                     alt="Avatar Option"
                                     src={avatar}
                                     onClick={() => handleAvatarChange(avatar)}
-                                    sx={{ cursor: 'pointer', width: 80, height: 80, border: selectedAvatar === avatar ? '2px solid #007AFF' : 'none' }}
+                                    sx={{ cursor: 'pointer', width: 80, height: 80, border: profile.avatar === avatar ? '2px solid #007AFF' : 'none' }}
                                 />
                             </Grid>
                         ))}

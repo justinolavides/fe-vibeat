@@ -13,6 +13,13 @@ import Settings from './Settings';
 import Playlist from './Playlist'; // Import Playlist component
 import './App.css';
 
+/**
+ * The main App component, which wraps the entire application in a Router
+ * component. Handles state for the user's profile data, and provides a
+ * function to update this data. Renders different routes based on the URL
+ * path, including the login, register, admin, contact, music dashboard,
+ * profile, settings, playlist, forgot password, and reset password pages.
+ */
 function App() {
     const [userProfile, setUserProfile] = useState({ name: '', email: '', bio: '', avatar: '/static/images/avatar/1.jpg' });
 

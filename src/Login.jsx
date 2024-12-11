@@ -25,7 +25,17 @@ const Home = () => {
 
             if (response.data.token) {
                 localStorage.setItem('auth_token', response.data.token);
-                navigate('/admin');  // Redirect after successful login
+                // Check the user's role and navigate accordingly 
+                const userRole = response.data.role;
+
+                if (userRole === 'admin') { 
+                    navigate('/admin'); 
+                } else if (userRole === 'user') { 
+                    navigate('/music-dashboard'); 
+                } else { 
+                    navigate('/'); 
+                }
+            
             } else {
                 setError('Invalid login credentials'); // Show error if no token returned
             }
@@ -42,6 +52,13 @@ const Home = () => {
         setShowLogin(false);
     };
 
+    const handleAboutClick = () => {
+        const aboutSection = document.getElementById('about-section');
+        if (aboutSection) {
+            aboutSection.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
+
     return (
         <>
             <AppBar position="static" style={{ backgroundColor: 'rgba(50, 0, 0, 0.3)' }}>
@@ -52,6 +69,7 @@ const Home = () => {
                     </Typography>
                     <Button color="inherit" onClick={handleHomeClick}>Home</Button>
                     <Button color="inherit" onClick={() => navigate('/contact')}>Contact</Button>
+                    <Button color="inherit" onClick={handleAboutClick}>About</Button>
                     <Button color="inherit" onClick={handleLoginClick}>Login</Button>
                 </Toolbar>
             </AppBar>

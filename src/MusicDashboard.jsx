@@ -96,6 +96,11 @@ const MusicDashboard = () => {
         navigate('/profile'); // Navigate to the Profile page
     };
 
+    const handleNavigateToSettings = () => {
+        setAnchorEl(null); // Close the menu
+        navigate('/settings'); // Navigate to the Settings page
+    };
+
     const filteredMusic = music.filter((song) =>
         song.title.toLowerCase().includes(search.toLowerCase()) ||
         song.artist.toLowerCase().includes(search.toLowerCase())
@@ -127,7 +132,7 @@ const MusicDashboard = () => {
                         onClose={handleProfileMenuClose}
                     >
                         <MenuItem onClick={handleNavigateToProfile}>Profile</MenuItem>
-                        <MenuItem onClick={handleProfileMenuClose}>Settings</MenuItem>
+                        <MenuItem onClick={handleNavigateToSettings}>Settings</MenuItem> {/* Navigate to Settings */}
                         <MenuItem onClick={handleLogout}>Log Out</MenuItem>
                     </Menu>
                 </Toolbar>

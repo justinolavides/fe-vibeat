@@ -11,17 +11,17 @@ const ForgotPassword = () => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+        setError('');
+        setMessage('');
         try {
             const response = await api.post('/forgot-password', { email });
-            if (response.status === 200) {
-                navigate('/reset-password');
+            if (response.data.success) {
+                setMessage('Password reset link sent to your email.');
             } else {
-                setError(response.data.message);
-                setMessage('');
+                setError('Invalid email.');
             }
         } catch (error) {
             setError('Failed to send password reset email. Please try again.');
-            setMessage('');
         }
     };
 

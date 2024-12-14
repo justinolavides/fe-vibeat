@@ -21,6 +21,7 @@ import {
     List,
     ListItem,
     ListItemText,
+    CircularProgress,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import api from './services/api'; // Your axios instance
@@ -33,8 +34,13 @@ const MusicDashboard = () => {
     const [nowPlaying, setNowPlaying] = useState(null);
     const [playlist, setPlaylist] = useState([]);
     const [anchorEl, setAnchorEl] = useState(null);
+    const [loading, setLoading] = useState({
+        music: true,
+        topCharts: true,
+        listenAgain: true,
+    });
 
-    const navigate = useNavigate(); // Initialize useNavigate
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchMusic = async () => {
@@ -43,6 +49,8 @@ const MusicDashboard = () => {
                 setMusic(response.data);
             } catch (error) {
                 console.error('Error fetching music:', error);
+            } finally {
+                setLoading((prev) => ({ ...prev, music: false }));
             }
         };
 
@@ -52,6 +60,8 @@ const MusicDashboard = () => {
                 setTopCharts(response.data);
             } catch (error) {
                 console.error('Error fetching top charts:', error);
+            } finally {
+                setLoading((prev) => ({ ...prev, topCharts: false }));
             }
         };
 
@@ -61,6 +71,8 @@ const MusicDashboard = () => {
                 setListenAgain(response.data);
             } catch (error) {
                 console.error('Error fetching listen again songs:', error);
+            } finally {
+                setLoading((prev) => ({ ...prev, listenAgain: false }));
             }
         };
 
@@ -86,19 +98,18 @@ const MusicDashboard = () => {
     };
 
     const handleLogout = () => {
-        // Clear authentication data (e.g., token)
-        localStorage.removeItem('authToken'); // Example: remove token from localStorage
-        navigate('/'); // Navigate to homepage
+        localStorage.removeItem('authToken');
+        navigate('/');
     };
 
     const handleNavigateToProfile = () => {
-        setAnchorEl(null); // Close the menu
-        navigate('/profile'); // Navigate to the Profile page
+        setAnchorEl(null);
+        navigate('/profile');
     };
 
     const handleNavigateToSettings = () => {
-        setAnchorEl(null); // Close the menu
-        navigate('/settings'); // Navigate to the Settings page
+        setAnchorEl(null);
+        navigate('/settings');
     };
 
     const filteredMusic = music.filter((song) =>
@@ -120,7 +131,7 @@ const MusicDashboard = () => {
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         InputProps={{
-                            sx: { backgroundColor: 'white', borderRadius: '4px' }
+                            sx: { backgroundColor: 'white', borderRadius: '4px' },
                         }}
                     />
                     <IconButton onClick={handleProfileMenuOpen}>
@@ -132,7 +143,7 @@ const MusicDashboard = () => {
                         onClose={handleProfileMenuClose}
                     >
                         <MenuItem onClick={handleNavigateToProfile}>Profile</MenuItem>
-                        <MenuItem onClick={handleNavigateToSettings}>Settings</MenuItem> {/* Navigate to Settings */}
+                        <MenuItem onClick={handleNavigateToSettings}>Settings</MenuItem>
                         <MenuItem onClick={handleLogout}>Log Out</MenuItem>
                     </Menu>
                 </Toolbar>
@@ -143,42 +154,50 @@ const MusicDashboard = () => {
                 <Grid item xs={12} md={3}>
                     <Box mb={3}>
                         <Typography variant="h6">Top Charts</Typography>
-                        {topCharts.map((song) => (
-                            <Paper key={song.id} elevation={2} sx={{ p: 2, mb: 1 }}>
-                                <Typography variant="body1">{song.title}</Typography>
-                                <Typography variant="body2" color="textSecondary">
-                                    {song.artist}
-                                </Typography>
-                                <Button
-                                    onClick={() => handleAddToPlaylist(song)}
-                                    variant="contained"
-                                    color="secondary"
-                                    sx={{ mt: 1 }}
-                                >
-                                    Add to Playlist
-                                </Button>
-                            </Paper>
-                        ))}
+                        {loading.topCharts ? (
+                            <CircularProgress />
+                        ) : (
+                            topCharts.map((song) => (
+                                <Paper key={song.id} elevation={2} sx={{ p: 2, mb: 1 }}>
+                                    <Typography variant="body1">{song.title}</Typography>
+                                    <Typography variant="body2" color="textSecondary">
+                                        {song.artist}
+                                    </Typography>
+                                    <Button
+                                        onClick={() => handleAddToPlaylist(song)}
+                                        variant="contained"
+                                        color="secondary"
+                                        sx={{ mt: 1 }}
+                                    >
+                                        Add to Playlist
+                                    </Button>
+                                </Paper>
+                            ))
+                        )}
                     </Box>
 
                     <Box mb={3}>
                         <Typography variant="h6">Listen Again</Typography>
-                        {listenAgain.map((song) => (
-                            <Paper key={song.id} elevation={2} sx={{ p: 2, mb: 1 }}>
-                                <Typography variant="body1">{song.title}</Typography>
-                                <Typography variant="body2" color="textSecondary">
-                                    {song.artist}
-                                </Typography>
-                                <Button
-                                    onClick={() => handleAddToPlaylist(song)}
-                                    variant="contained"
-                                    color="secondary"
-                                    sx={{ mt: 1 }}
-                                >
-                                    Add to Playlist
-                                </Button>
-                            </Paper>
-                        ))}
+                        {loading.listenAgain ? (
+                            <CircularProgress />
+                        ) : (
+                            listenAgain.map((song) => (
+                                <Paper key={song.id} elevation={2} sx={{ p: 2, mb: 1 }}>
+                                    <Typography variant="body1">{song.title}</Typography>
+                                    <Typography variant="body2" color="textSecondary">
+                                        {song.artist}
+                                    </Typography>
+                                    <Button
+                                        onClick={() => handleAddToPlaylist(song)}
+                                        variant="contained"
+                                        color="secondary"
+                                        sx={{ mt: 1 }}
+                                    >
+                                        Add to Playlist
+                                    </Button>
+                                </Paper>
+                            ))
+                        )}
                     </Box>
                 </Grid>
 
@@ -188,44 +207,50 @@ const MusicDashboard = () => {
                         Music List
                     </Typography>
                     <Paper elevation={3} sx={{ p: 2 }}>
-                        <Table>
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell>Title</TableCell>
-                                    <TableCell>Artist</TableCell>
-                                    <TableCell>Album</TableCell>
-                                    <TableCell>Year</TableCell>
-                                    <TableCell>Actions</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {filteredMusic.map((song) => (
-                                    <TableRow key={song.id}>
-                                        <TableCell>{song.title}</TableCell>
-                                        <TableCell>{song.artist}</TableCell>
-                                        <TableCell>{song.album}</TableCell>
-                                        <TableCell>{song.year}</TableCell>
-                                        <TableCell>
-                                            <Button
-                                                onClick={() => handlePlay(song)}
-                                                variant="contained"
-                                                color="primary"
-                                            >
-                                                Play
-                                            </Button>
-                                            <Button
-                                                onClick={() => handleAddToPlaylist(song)}
-                                                variant="contained"
-                                                color="secondary"
-                                                sx={{ ml: 1 }}
-                                            >
-                                                Add to Playlist
-                                            </Button>
-                                        </TableCell>
+                        {loading.music ? (
+                            <Box display="flex" justifyContent="center">
+                                <CircularProgress />
+                            </Box>
+                        ) : (
+                            <Table>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell>Title</TableCell>
+                                        <TableCell>Artist</TableCell>
+                                        <TableCell>Album</TableCell>
+                                        <TableCell>Year</TableCell>
+                                        <TableCell>Actions</TableCell>
                                     </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
+                                </TableHead>
+                                <TableBody>
+                                    {filteredMusic.map((song) => (
+                                        <TableRow key={song.id}>
+                                            <TableCell>{song.title}</TableCell>
+                                            <TableCell>{song.artist}</TableCell>
+                                            <TableCell>{song.album}</TableCell>
+                                            <TableCell>{song.year}</TableCell>
+                                            <TableCell>
+                                                <Button
+                                                    onClick={() => handlePlay(song)}
+                                                    variant="contained"
+                                                    color="primary"
+                                                >
+                                                    Play
+                                                </Button>
+                                                <Button
+                                                    onClick={() => handleAddToPlaylist(song)}
+                                                    variant="contained"
+                                                    color="secondary"
+                                                    sx={{ ml: 1 }}
+                                                >
+                                                    Add to Playlist
+                                                </Button>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        )}
                     </Paper>
                 </Grid>
 

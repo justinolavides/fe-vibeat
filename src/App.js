@@ -9,8 +9,9 @@ import ForgotPassword from './ForgotPassword';
 import ResetPassword from './ResetPassword';
 import MusicDashboard from './MusicDashboard';
 import Profile from './Profile';
-import Settings from './Settings'; // Import the Settings component
-import Playlist from './Playlist'; // Import Playlist component
+import Settings from './Settings';
+import Playlist from './Playlist';
+import DownloadPage from './DownloadPage';
 import './App.css';
 
 /**
@@ -21,12 +22,7 @@ import './App.css';
  * profile, settings, playlist, forgot password, and reset password pages.
  */
 function App() {
-    const [userProfile, setUserProfile] = useState({
-        name: '',
-        email: '',
-        bio: '',
-        avatar: '/static/images/avatar/1.jpg',
-    });
+    const [userProfile, setUserProfile] = useState({ name: '', email: '', bio: '', avatar: '/static/images/avatar/1.jpg' });
 
     // Function to update profile data
     const handleProfileUpdate = (updatedProfile) => {
@@ -50,6 +46,7 @@ function App() {
                 <Route path="/playlist" element={<Playlist />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
                 <Route path="/reset-password/:token" element={<ResetPassword />} />
+                <Route path="/downloads" element={<DownloadPage />} />  {/* Added DownloadPage Route */}
                 <Route path="*" element={<Navigate to="/" />} />
             </Routes>
         </Router>

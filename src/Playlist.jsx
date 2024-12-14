@@ -20,9 +20,11 @@ import {
     List,
     ListItem,
     ListItemText,
-    Avatar
+    Avatar,
+    Snackbar,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { PlayArrow, Pause, Add, Delete } from '@mui/icons-material';
 import api from './services/api';
 
 
@@ -34,6 +36,8 @@ const Playlist = () => {
     const [nowPlaying, setNowPlaying] = useState(null);
     const [playlist, setPlaylist] = useState([]);
     const [anchorEl, setAnchorEl] = useState(null);
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState('');
 
     const navigate = useNavigate();
 
@@ -56,9 +60,25 @@ const Playlist = () => {
         fetchData();
     }, []);
 
-    const handlePlay = (song) => setNowPlaying(song);
+    const handlePlayPause = (song) => {
+        if (nowPlaying?.id === song.id) {
+            setNowPlaying(null);
+        } else {
+            setNowPlaying(song);
+        }
+    };
 
-    const handleAddToPlaylist = (song) => setPlaylist((prev) => [...prev, song]);
+    const handleAddToPlaylist = (song) => {
+        setPlaylist((prev) => [...prev, song]);
+        setSnackbarMessage(`Added ${song.title} to playlist`);
+        setSnackbarOpen(true);
+    };
+
+    const handleRemoveFromPlaylist = (song) => {
+        setPlaylist((prev) => prev.filter(track => track.id !== song.id));
+        setSnackbarMessage(`Removed ${song.title} from playlist`);
+        setSnackbarOpen(true);
+    };
 
     const handleProfileMenuOpen = (event) => setAnchorEl(event.currentTarget);
     const handleProfileMenuClose = () => setAnchorEl(null);
@@ -67,6 +87,8 @@ const Playlist = () => {
         setAnchorEl(null);
         navigate('/profile');
     };
+
+    const handleSnackbarClose = () => setSnackbarOpen(false);
 
     const filteredMusic = music.filter((song) =>
         song.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -109,14 +131,24 @@ const Playlist = () => {
                             <Paper key={song.id} elevation={2} sx={{ p: 2, mb: 1 }}>
                                 <Typography variant="body1">{song.title}</Typography>
                                 <Typography variant="body2" color="textSecondary">{song.artist}</Typography>
-                                <Button
-                                    onClick={() => handleAddToPlaylist(song)}
-                                    variant="contained"
-                                    color="secondary"
-                                    sx={{ mt: 1 }}
-                                >
-                                    Add to Playlist
-                                </Button>
+                                <Box display="flex" justifyContent="space-between" mt={1}>
+                                    <Button
+                                        onClick={() => handleAddToPlaylist(song)}
+                                        variant="contained"
+                                        color="secondary"
+                                        startIcon={<Add />}
+                                    >
+                                        Add
+                                    </Button>
+                                    <Button
+                                        onClick={() => handlePlayPause(song)}
+                                        variant="contained"
+                                        color="primary"
+                                        startIcon={nowPlaying?.id === song.id ? <Pause /> : <PlayArrow />}
+                                    >
+                                        {nowPlaying?.id === song.id ? 'Pause' : 'Play'}
+                                    </Button>
+                                </Box>
                             </Paper>
                         ))}
                     </Box>
@@ -127,14 +159,24 @@ const Playlist = () => {
                             <Paper key={song.id} elevation={2} sx={{ p: 2, mb: 1 }}>
                                 <Typography variant="body1">{song.title}</Typography>
                                 <Typography variant="body2" color="textSecondary">{song.artist}</Typography>
-                                <Button
-                                    onClick={() => handleAddToPlaylist(song)}
-                                    variant="contained"
-                                    color="secondary"
-                                    sx={{ mt: 1 }}
-                                >
-                                    Add to Playlist
-                                </Button>
+                                <Box display="flex" justifyContent="space-between" mt={1}>
+                                    <Button
+                                        onClick={() => handleAddToPlaylist(song)}
+                                        variant="contained"
+                                        color="secondary"
+                                        startIcon={<Add />}
+                                    >
+                                        Add
+                                    </Button>
+                                    <Button
+                                        onClick={() => handlePlayPause(song)}
+                                        variant="contained"
+                                        color="primary"
+                                        startIcon={nowPlaying?.id === song.id ? <Pause /> : <PlayArrow />}
+                                    >
+                                        {nowPlaying?.id === song.id ? 'Pause' : 'Play'}
+                                    </Button>
+                                </Box>
                             </Paper>
                         ))}
                     </Box>
@@ -142,7 +184,7 @@ const Playlist = () => {
 
                 {/* Middle Column */}
                 <Grid item xs={12} md={6}>
-                    <Typography variant="h5" gutterBottom>Playlist</Typography>
+                    <Typography variant="h5" gutterBottom>All Songs</Typography>
                     <Paper elevation={3} sx={{ p: 2 }}>
                         <Table>
                             <TableHead>
@@ -163,19 +205,21 @@ const Playlist = () => {
                                         <TableCell>{song.year}</TableCell>
                                         <TableCell>
                                             <Button
-                                                onClick={() => handlePlay(song)}
+                                                onClick={() => handlePlayPause(song)}
                                                 variant="contained"
                                                 color="primary"
+                                                startIcon={nowPlaying?.id === song.id ? <Pause /> : <PlayArrow />}
                                             >
-                                                Play
+                                                {nowPlaying?.id === song.id ? 'Pause' : 'Play'}
                                             </Button>
                                             <Button
                                                 onClick={() => handleAddToPlaylist(song)}
                                                 variant="contained"
                                                 color="secondary"
+                                                startIcon={<Add />}
                                                 sx={{ ml: 1 }}
                                             >
-                                                Add to Playlist
+                                                Add
                                             </Button>
                                         </TableCell>
                                     </TableRow>
@@ -198,17 +242,27 @@ const Playlist = () => {
                     )}
 
                     <Box mb={3}>
-                        <Typography variant="h6"></Typography>
+                        <Typography variant="h6">Your Playlist</Typography>
                         <List>
-                            {playlist.map((song, index) => (
-                                <ListItem key={index}>
+                            {playlist.map((song) => (
+                                <ListItem key={song.id}>
                                     <ListItemText primary={song.title} secondary={`${song.artist} • ${song.album}`} />
+                                    <IconButton edge="end" aria-label="delete" onClick={() => handleRemoveFromPlaylist(song)}>
+                                        <Delete />
+                                    </IconButton>
                                 </ListItem>
                             ))}
                         </List>
                     </Box>
                 </Grid>
             </Grid>
+
+            <Snackbar
+                open={snackbarOpen}
+                autoHideDuration={3000}
+                onClose={handleSnackbarClose}
+                message={snackbarMessage}
+            />
         </Container>
     );
 };

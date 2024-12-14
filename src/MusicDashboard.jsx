@@ -40,6 +40,12 @@ const MusicDashboard = () => {
         listenAgain: true,
     });
 
+    const defaultSong = {
+        title: 'Sample Song',
+        artist: 'Sample Artist',
+        url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+    };
+
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -256,30 +262,53 @@ const MusicDashboard = () => {
 
                 {/* Right Column - Now Playing and Playlist */}
                 <Grid item xs={12} md={3}>
-                    {nowPlaying && (
-                        <Box mb={3}>
-                            <Typography variant="h6">Now Playing</Typography>
-                            <Paper elevation={3} sx={{ p: 2 }}>
+                    <Box mb={3}>
+                        <Typography variant="h6">Now Playing</Typography>
+                        {nowPlaying ? (
+                            <Paper elevation={2} sx={{ p: 2 }}>
                                 <Typography variant="body1">{nowPlaying.title}</Typography>
                                 <Typography variant="body2" color="textSecondary">
                                     {nowPlaying.artist}
                                 </Typography>
+                                <audio controls src={nowPlaying.url} style={{ width: '100%' }} />
                             </Paper>
-                        </Box>
-                    )}
+                        ) : (
+                            <Typography variant="body2" color="textSecondary">
+                                No song is currently playing.
+                            </Typography>
+                        )}
+                    </Box>
 
                     <Box mb={3}>
                         <Typography variant="h6">Playlist</Typography>
                         <List>
-                            {playlist.map((song, index) => (
-                                <ListItem key={index}>
-                                    <ListItemText
-                                        primary={song.title}
-                                        secondary={`${song.artist} • ${song.album}`}
-                                    />
-                                </ListItem>
-                            ))}
+                            {playlist.length > 0 ? (
+                                playlist.map((song, index) => (
+                                    <ListItem key={index}>
+                                        <ListItemText
+                                            primary={song.title}
+                                            secondary={song.artist}
+                                        />
+                                    </ListItem>
+                                ))
+                            ) : (
+                                <Typography variant="body2" color="textSecondary">
+                                    Your playlist is empty.
+                                </Typography>
+                            )}
                         </List>
+                    </Box>
+
+                    {/* Default Song Player */}
+                    <Box mb={3}>
+                        <Typography variant="h6">Sample Song</Typography>
+                        <Paper elevation={2} sx={{ p: 2 }}>
+                            <Typography variant="body1">{defaultSong.title}</Typography>
+                            <Typography variant="body2" color="textSecondary">
+                                {defaultSong.artist}
+                            </Typography>
+                            <audio controls src={defaultSong.url} style={{ width: '100%' }} />
+                        </Paper>
                     </Box>
                 </Grid>
             </Grid>

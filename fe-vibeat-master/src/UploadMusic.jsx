@@ -73,16 +73,6 @@ const UploadMusic = () => {
         setSelectedFile(file);
     };
 
-<<<<<<< HEAD
-    const handleNavigateToPlaylist = () => {
-        navigate('/playlist', { state: { playlist } }); // Pass the playlist to the PlaylistPage
-    };
-
-    const filteredMusic = music.filter((song) =>
-        song.title.toLowerCase().includes(search.toLowerCase()) ||
-        song.artist.toLowerCase().includes(search.toLowerCase())
-    );
-=======
     const handleMenuClose = () => {
         setMenuAnchorEl(null);
         setSelectedFile(null);
@@ -144,28 +134,13 @@ const UploadMusic = () => {
     const handlePrevious = () => {
         console.log("Previous song!");
     };
->>>>>>> 3dddddbc5187c04c66aa86d81275a00e3eb2d757
 
     return (
         <Container maxWidth="xl" sx={{ mt: 4 }}>
             {/* Header */}
             <AppBar position="static" sx={{ mb: 3, backgroundColor: '#1c1c1e' }}>
                 <Toolbar>
-<<<<<<< HEAD
-                    <Typography variant="h6" sx={{ flexGrow: 1 }}>
-                        ViBeat
-                    </Typography>
-                    <Button
-                        variant="contained"
-                        color="secondary"
-                        onClick={handleNavigateToPlaylist}
-                        sx={{ mr: 2 }}
-                    >
-                        Playlist
-                    </Button>
-=======
                     <Typography variant="h6" sx={{ flexGrow: 1 }}>Upload Music</Typography>
->>>>>>> 3dddddbc5187c04c66aa86d81275a00e3eb2d757
                     <TextField
                         variant="outlined"
                         placeholder="Search songs"
@@ -292,33 +267,6 @@ const UploadMusic = () => {
                             </IconButton>
                         </Box>
 
-<<<<<<< HEAD
-                    <Box mb={3}>
-                        <Typography variant="h6">Playlist</Typography>
-                        <List>
-                            {playlist.slice(0, 3).map((song, index) => (
-                                <ListItem key={index}>
-                                    <ListItemText
-                                        primary={song.title}
-                                        secondary={`${song.artist} • ${song.album}`}
-                                    />
-                                </ListItem>
-                            ))}
-                        </List>
-                        {playlist.length > 0 && (
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                onClick={handleNavigateToPlaylist}
-                                sx={{ mt: 2 }}
-                            >
-                                View Full Playlist
-                            </Button>
-                        )}
-                    </Box>
-                </Grid>
-            </Grid>
-=======
                         {/* Progress Slider and Timers */}
                         <Box sx={{ display: 'flex', alignItems: 'center', width: '100%', mt: 2 }}>
                             <Typography variant="caption" sx={{ mr: 1 }}>{formatTime(audio?.currentTime || 0)}</Typography>
@@ -342,7 +290,6 @@ const UploadMusic = () => {
                     </Paper>
                 </Box>
             )}
->>>>>>> 3dddddbc5187c04c66aa86d81275a00e3eb2d757
         </Container>
     );
 };

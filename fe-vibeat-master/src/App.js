@@ -10,7 +10,8 @@ import ResetPassword from './ResetPassword';
 import MusicDashboard from './MusicDashboard';
 import Profile from './Profile';
 import Settings from './Settings';
-import Playlist from './Playlist'; // Import Playlist component
+import Playlist from './Playlist';
+import DownloadPage from './DownloadPage';
 import './App.css';
 
 /**
@@ -42,9 +43,10 @@ function App() {
                 <Route path="/music-dashboard" element={<MusicDashboard userProfile={userProfile} />} />
                 <Route path="/profile" element={<Profile onProfileUpdate={handleProfileUpdate} userProfile={userProfile} />} />
                 <Route path="/settings" element={<Settings />} />
-                <Route path="/playlist" element={<Playlist />} /> {/* Add the playlist route */}
+                <Route path="/playlist" element={<Playlist />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
                 <Route path="/reset-password/:token" element={<ResetPassword />} />
+                <Route path="/downloads" element={<DownloadPage />} />  {/* Added DownloadPage Route */}
                 <Route path="*" element={<Navigate to="/" />} />
             </Routes>
         </Router>

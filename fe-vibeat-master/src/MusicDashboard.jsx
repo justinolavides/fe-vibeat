@@ -96,6 +96,10 @@ const MusicDashboard = () => {
         navigate('/profile'); // Navigate to the Profile page
     };
 
+    const handleNavigateToPlaylist = () => {
+        navigate('/playlist', { state: { playlist } }); // Pass the playlist to the PlaylistPage
+    };
+
     const filteredMusic = music.filter((song) =>
         song.title.toLowerCase().includes(search.toLowerCase()) ||
         song.artist.toLowerCase().includes(search.toLowerCase())
@@ -109,6 +113,14 @@ const MusicDashboard = () => {
                     <Typography variant="h6" sx={{ flexGrow: 1 }}>
                         ViBeat
                     </Typography>
+                    <Button
+                        variant="contained"
+                        color="secondary"
+                        onClick={handleNavigateToPlaylist}
+                        sx={{ mr: 2 }}
+                    >
+                        Playlist
+                    </Button>
                     <TextField
                         variant="outlined"
                         placeholder="Search for songs"
@@ -241,7 +253,7 @@ const MusicDashboard = () => {
                     <Box mb={3}>
                         <Typography variant="h6">Playlist</Typography>
                         <List>
-                            {playlist.map((song, index) => (
+                            {playlist.slice(0, 3).map((song, index) => (
                                 <ListItem key={index}>
                                     <ListItemText
                                         primary={song.title}
@@ -250,6 +262,16 @@ const MusicDashboard = () => {
                                 </ListItem>
                             ))}
                         </List>
+                        {playlist.length > 0 && (
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={handleNavigateToPlaylist}
+                                sx={{ mt: 2 }}
+                            >
+                                View Full Playlist
+                            </Button>
+                        )}
                     </Box>
                 </Grid>
             </Grid>

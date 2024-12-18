@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {
     Container, AppBar, Toolbar, Typography, Grid, Box, Button, TextField, IconButton, Menu, MenuItem, Avatar, Paper, Slider
 } from '@mui/material';
-import { CloudUpload, PlayArrow, Pause, VolumeUp, MoreVert, PlaylistAdd, FileDownload, Delete, Edit, Share } from '@mui/icons-material';
+import { CloudUpload, PlayArrow, Pause, VolumeUp, MoreVert, PlaylistAdd, FileDownload, Delete, Edit, Share, Shuffle, SkipPrevious, SkipNext, Repeat } from '@mui/icons-material'; // Added missing imports for Shuffle, SkipPrevious, SkipNext, and Repeat
 
 const UploadMusic = () => {
     const [files, setFiles] = useState([]);
@@ -108,6 +108,33 @@ const UploadMusic = () => {
         handleMenuClose();
     };
 
+    // Format time into MM:SS
+    const formatTime = (time) => {
+        const minutes = Math.floor(time / 60);
+        const seconds = Math.floor(time % 60);
+        return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+    };
+
+    // Handle Shuffle Logic (placeholder)
+    const handleShuffle = () => {
+        console.log("Shuffle activated!");
+    };
+
+    // Handle Repeat Logic (placeholder)
+    const handleRepeat = () => {
+        console.log("Repeat activated!");
+    };
+
+    // Handle Next Song Logic (placeholder)
+    const handleNext = () => {
+        console.log("Next song!");
+    };
+
+    // Handle Previous Song Logic (placeholder)
+    const handlePrevious = () => {
+        console.log("Previous song!");
+    };
+
     return (
         <Container maxWidth="xl" sx={{ mt: 4 }}>
             {/* Header */}
@@ -153,7 +180,6 @@ const UploadMusic = () => {
                 >
                     Select Files
                 </Button>
-                
             </Paper>
 
             {/* Display selected files */}
@@ -208,27 +234,57 @@ const UploadMusic = () => {
             {/* Now Playing Section */}
             {nowPlaying && (
                 <Box mt={3}>
-                    <Typography variant="h6">Now Playing</Typography>
+                    <Typography variant="h6" sx={{ mb: 1 }}>Now Playing</Typography>
                     <Paper elevation={3} sx={{
-                        p: 2, borderRadius: 2,
+                        p: 3,
+                        borderRadius: 2,
                         background: 'linear-gradient(to right, #e3f2fd, #f1f8e9)',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        textAlign: 'center'
                     }}>
+                        {/* Song Title and Info */}
                         <Typography variant="h6" gutterBottom>{nowPlaying.name}</Typography>
-                        <Typography variant="body2" color="textSecondary">Uploaded by You</Typography>
-                        <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
-                            <IconButton onClick={() => handlePlayPause(nowPlaying)} color="primary">
-                                {audio?.paused ? <PlayArrow /> : <Pause />}
+                        <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>Uploaded by You</Typography>
+
+                        {/* Playback Controls */}
+                        <Box sx={{ display: 'flex', alignItems: 'center', width: '100%', justifyContent: 'center' }}>
+                            <IconButton onClick={() => handleShuffle()} color="primary" size="large">
+                                <Shuffle />
                             </IconButton>
+                            <IconButton onClick={() => handlePrevious()} color="primary" size="large">
+                                <SkipPrevious />
+                            </IconButton>
+                            <IconButton onClick={() => handlePlayPause(nowPlaying)} color="primary" size="large">
+                                {audio?.paused ? <PlayArrow fontSize="large" /> : <Pause fontSize="large" />}
+                            </IconButton>
+                            <IconButton onClick={() => handleNext()} color="primary" size="large">
+                                <SkipNext />
+                            </IconButton>
+                            <IconButton onClick={() => handleRepeat()} color="primary" size="large">
+                                <Repeat />
+                            </IconButton>
+                        </Box>
+
+                        {/* Progress Slider and Timers */}
+                        <Box sx={{ display: 'flex', alignItems: 'center', width: '100%', mt: 2 }}>
+                            <Typography variant="caption" sx={{ mr: 1 }}>{formatTime(audio?.currentTime || 0)}</Typography>
                             <Slider
                                 value={progress}
                                 onChange={handleProgressChange}
                                 sx={{ mx: 2, flex: 1 }}
                             />
+                            <Typography variant="caption" sx={{ ml: 1 }}>{formatTime(audio?.duration || 0)}</Typography>
+                        </Box>
+
+                        {/* Volume Control */}
+                        <Box sx={{ display: 'flex', alignItems: 'center', width: '50%', mt: 1 }}>
                             <VolumeUp />
                             <Slider
                                 value={volume}
                                 onChange={handleVolumeChange}
-                                sx={{ width: 100, ml: 1 }}
+                                sx={{ mx: 2 }}
                             />
                         </Box>
                     </Paper>

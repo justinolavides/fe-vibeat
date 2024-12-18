@@ -1,13 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Container, TextField, Button, Box, Typography, Paper, Avatar, Alert, CircularProgress, Dialog, DialogTitle, DialogContent, DialogActions, Grid, FormHelperText } from '@mui/material';
+import { 
+    Container, TextField, Button, Box, Typography, Avatar, Alert, 
+    CircularProgress, Dialog, DialogTitle, DialogContent, DialogActions, Grid, FormHelperText 
+} from '@mui/material';
 import api from './services/api';
 
 const avatarOptions = [
-    '/static/images/avatar/1.jpg',
-    '/static/images/avatar/2.jpg',
-    '/static/images/avatar/3.jpg',
-    '/static/images/avatar/4.jpg',
+    'https://randomuser.me/api/portraits/lego/2.jpg',  // Male 2
+    'https://randomuser.me/api/portraits/lego/3.jpg',  // Male 3
+    'https://randomuser.me/api/portraits/lego/4.jpg',  // Male 4
+    'https://randomuser.me/api/portraits/lego/5.jpg',  // Male 5
+    'https://randomuser.me/api/portraits/lego/6.jpg',  // Female 1
+    'https://randomuser.me/api/portraits/lego/7.jpg',  // Female 2
+    'https://randomuser.me/api/portraits/lego/8.jpg',  // Female 3
+    'https://randomuser.me/api/portraits/lego/9.jpg',
+    'https://robohash.org/:random.png'
+    //   // Female 4
 ];
 
 const Profile = ({ onProfileUpdate }) => {

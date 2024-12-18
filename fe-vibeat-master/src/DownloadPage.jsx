@@ -55,9 +55,14 @@ const DownloadPage = () => {
 
     const handlePlayPause = (item) => {
         if (nowPlaying?.id === item.id) {
-            audio.paused ? audio.play() : audio.pause();
+            if (audio.paused) {
+                audio.play();
+            } else {
+                audio.pause();
+                setNowPlaying(null); // Reset `nowPlaying` to toggle the button state
+            }
         } else {
-            audio?.pause();
+            if (audio) audio.pause(); // Pause the currently playing audio
             const newAudio = new Audio(item.url);
             newAudio.volume = volume / 100;
             newAudio.play().catch(() => console.error('Error playing audio.'));

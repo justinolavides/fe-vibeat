@@ -12,19 +12,13 @@ import Profile from './Profile';
 import Settings from './Settings';
 import Playlist from './Playlist';
 import DownloadPage from './DownloadPage';
+import SearchResults from './SearchResults';
+import UploadMusic from './UploadMusic'; // Import UploadMusic component
 import './App.css';
 
-/**
- * The main App component, which wraps the entire application in a Router
- * component. Handles state for the user's profile data, and provides a
- * function to update this data. Renders different routes based on the URL
- * path, including the login, register, admin, contact, music dashboard,
- * profile, settings, playlist, forgot password, and reset password pages.
- */
 function App() {
     const [userProfile, setUserProfile] = useState({ name: '', email: '', bio: '', avatar: '/static/images/avatar/1.jpg' });
 
-    // Function to update profile data
     const handleProfileUpdate = (updatedProfile) => {
         setUserProfile(updatedProfile);
     };
@@ -46,7 +40,9 @@ function App() {
                 <Route path="/playlist" element={<Playlist />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
                 <Route path="/reset-password/:token" element={<ResetPassword />} />
-                <Route path="/downloads" element={<DownloadPage />} />  {/* Added DownloadPage Route */}
+                <Route path="/downloads" element={<DownloadPage />} />
+                <Route path="/search" element={<SearchResults />} />
+                <Route path="/upload" element={<UploadMusic />} />  {/* Added UploadMusic Route */}
                 <Route path="*" element={<Navigate to="/" />} />
             </Routes>
         </Router>

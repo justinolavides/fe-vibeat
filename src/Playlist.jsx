@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import {
     Container, AppBar, Toolbar, Typography, TextField, Grid, Paper,
-    Button, List, ListItem, ListItemText, IconButton, Snackbar, Box, Slider, Menu, MenuItem, Avatar
+    Button, List, ListItem, ListItemText, IconButton, Snackbar, Box, Slider, Menu, MenuItem, Avatar, Dialog, DialogTitle, DialogContent, DialogActions
 } from '@mui/material';
-import { Add, Delete, PlayArrow, Pause, VolumeUp } from '@mui/icons-material';
+import { Add, Delete, PlayArrow, Pause, VolumeUp, PlaylistAdd, PlaylistPlay } from '@mui/icons-material';
 
 const mockMusic = [
     { id: 1, title: 'Song A', artist: 'Artist 1', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3' },
@@ -17,14 +17,17 @@ const Playlist = () => {
     const [anchorEl, setAnchorEl] = useState(null);
     const [nowPlaying, setNowPlaying] = useState(null);
     const [playlist, setPlaylist] = useState([]);
+    const [playlists, setPlaylists] = useState([]);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [progress, setProgress] = useState(0);
     const [volume, setVolume] = useState(30);
     const [audio, setAudio] = useState(null);
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const [newPlaylistName, setNewPlaylistName] = useState('');
+    const [selectedSong, setSelectedSong] = useState(null);
 
     useEffect(() => {
-        // Simulate API call
         setMusic(mockMusic);
     }, []);
 
@@ -35,7 +38,6 @@ const Playlist = () => {
                     setProgress((audio.currentTime / audio.duration) * 100);
                 }
             };
-
             audio.addEventListener('timeupdate', updateProgress);
             return () => {
                 audio.removeEventListener('timeupdate', updateProgress);
@@ -48,22 +50,13 @@ const Playlist = () => {
             console.error('Song URL is missing');
             return;
         }
-
         if (nowPlaying?.id === song.id) {
-            if (audio.paused) {
-                audio.play();
-            } else {
-                audio.pause();
-            }
+            audio.paused ? audio.play() : audio.pause();
         } else {
-            if (audio) {
-                audio.pause();
-            }
+            if (audio) audio.pause();
             const newAudio = new Audio(song.url);
             newAudio.volume = volume / 100;
-            newAudio.play().catch(() => {
-                console.error('Error playing audio. URL may be invalid.');
-            });
+            newAudio.play().catch(() => console.error('Error playing audio.'));
             setAudio(newAudio);
             setNowPlaying(song);
         }
@@ -71,9 +64,7 @@ const Playlist = () => {
 
     const handleVolumeChange = (event, newValue) => {
         setVolume(newValue);
-        if (audio) {
-            audio.volume = newValue / 100;
-        }
+        if (audio) audio.volume = newValue / 100;
     };
 
     const handleProgressChange = (event, newValue) => {
@@ -83,23 +74,55 @@ const Playlist = () => {
         }
     };
 
-    const handleAddToPlaylist = (song) => {
-        setPlaylist((prev) => [...prev, song]);
-        setSnackbarMessage(`${song.title} added to playlist`);
+    const handleAddToPlaylist = (song, playlistName) => {
+        const updatedPlaylists = playlists.map(playlist => {
+            if (playlist.name === playlistName) {
+                if (playlist.songs.some(track => track.id === song.id)) {
+                    setSnackbarMessage(`${song.title} is already in the playlist`);
+                    setSnackbarOpen(true);
+                    return playlist;
+                }
+                setSnackbarMessage(`${song.title} added to playlist`);
+                setSnackbarOpen(true);
+                return { ...playlist, songs: [...playlist.songs, song] };
+            }
+            return playlist;
+        });
+        setPlaylists(updatedPlaylists);
+    };
+
+    const handleRemoveFromPlaylist = (songId, playlistName) => {
+        const updatedPlaylists = playlists.map(playlist => {
+            if (playlist.name === playlistName) {
+                return { ...playlist, songs: playlist.songs.filter(song => song.id !== songId) };
+            }
+            return playlist;
+        });
+        setPlaylists(updatedPlaylists);
+        setSnackbarMessage('Song removed from playlist');
         setSnackbarOpen(true);
     };
 
-    const handleRemoveFromPlaylist = (song) => {
-        setPlaylist((prev) => prev.filter((track) => track.id !== song.id));
-        setSnackbarMessage(`${song.title} removed from playlist`);
-        setSnackbarOpen(true);
+    const handleCreatePlaylist = () => {
+        if (newPlaylistName && !playlists.some(playlist => playlist.name === newPlaylistName)) {
+            setPlaylists([...playlists, { name: newPlaylistName, songs: [] }]);
+            setSnackbarMessage('Playlist created');
+            setSnackbarOpen(true);
+            setNewPlaylistName('');
+            setDialogOpen(false);
+        } else {
+            setSnackbarMessage('Playlist name already exists or is empty');
+            setSnackbarOpen(true);
+        }
+    };
+
+    const handleOpenAddToPlaylistDialog = (song) => {
+        setSelectedSong(song);
+        setDialogOpen(true);
     };
 
     const handleProfileMenuOpen = (event) => setAnchorEl(event.currentTarget);
     const handleProfileMenuClose = () => setAnchorEl(null);
-    const handleNavigateToProfile = () => { setAnchorEl(null); /* navigate to profile */ };
-    const handleNavigateToSettings = () => { setAnchorEl(null); /* navigate to settings */ };
-    const handleLogout = () => { setAnchorEl(null); /* handle logout */ };
 
     const filteredMusic = music.filter((song) =>
         song.title.toLowerCase().includes(search.toLowerCase())
@@ -108,122 +131,173 @@ const Playlist = () => {
     return (
         <Container maxWidth="xl" sx={{ mt: 4 }}>
             {/* Header */}
-            <AppBar position="static" sx={{ mb: 3 }}>
+            <AppBar position="static" sx={{ mb: 3, backgroundColor: '#1c1c1e' }}>
                 <Toolbar>
-                    <Typography variant="h6" sx={{ flexGrow: 1 }}>Playlist</Typography>
+                    <Typography variant="h6" sx={{ flexGrow: 1 }}>Music Playlist</Typography>
                     <TextField
                         variant="outlined"
                         placeholder="Search songs"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         sx={{ backgroundColor: 'white', borderRadius: 1 }}
+                        size="small"
                     />
                     <IconButton onClick={handleProfileMenuOpen}>
-                        <Avatar src="/static/images/avatar/1.jpg" alt="Profile" />
+                        <Avatar src="/static/images/avatar/1.jpg" />
                     </IconButton>
-                    <Menu
-                        anchorEl={anchorEl}
-                        open={Boolean(anchorEl)}
-                        onClose={handleProfileMenuClose}
-                    >
-                        <MenuItem onClick={handleNavigateToProfile}>Profile</MenuItem>
-                        <MenuItem onClick={handleNavigateToSettings}>Settings</MenuItem>
-                        <MenuItem onClick={handleLogout}>Log Out</MenuItem>
+                    <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleProfileMenuClose}>
+                        <MenuItem>Profile</MenuItem>
+                        <MenuItem>Settings</MenuItem>
+                        <MenuItem>Log Out</MenuItem>
                     </Menu>
                 </Toolbar>
             </AppBar>
 
             <Grid container spacing={3}>
-                {/* Left Column - Songs List */}
+                {/* Left Column */}
                 <Grid item xs={12} md={8}>
                     <Typography variant="h5" gutterBottom>All Songs</Typography>
                     {filteredMusic.map((song) => (
-                        <Paper key={song.id} elevation={2} sx={{ p: 2, mb: 2 }}>
-                            <Typography variant="body1">{song.title}</Typography>
-                            <Typography variant="body2" color="textSecondary">{song.artist}</Typography>
-                            <Button
-                                onClick={() => handlePlayPause(song)}
-                                variant="contained"
-                                color="primary"
-                                startIcon={nowPlaying?.id === song.id && !audio?.paused ? <Pause /> : <PlayArrow />}
-                                sx={{ mt: 1, mr: 1 }}
-                            >
-                                {nowPlaying?.id === song.id && !audio?.paused ? 'Pause' : 'Play'}
-                            </Button>
-                            <Button
-                                onClick={() => handleAddToPlaylist(song)}
-                                variant="contained"
-                                color="secondary"
-                                startIcon={<Add />}
-                                sx={{ mt: 1 }}
-                            >
-                                Add
-                            </Button>
+                        <Paper
+                            key={song.id}
+                            elevation={3}
+                            sx={{
+                                display: 'flex', justifyContent: 'space-between',
+                                alignItems: 'center', p: 2, mb: 2, borderRadius: 2,
+                                background: 'linear-gradient(to right, #f9f9f9, #fff)',
+                            }}
+                        >
+                            <Box>
+                                <Typography variant="h6">{song.title}</Typography>
+                                <Typography variant="body2" color="textSecondary">{song.artist}</Typography>
+                            </Box>
+                            <Box>
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    startIcon={nowPlaying?.id === song.id && !audio?.paused ? <Pause /> : <PlayArrow />}
+                                    onClick={() => handlePlayPause(song)}
+                                    sx={{ mr: 1 }}
+                                >
+                                    {nowPlaying?.id === song.id && !audio?.paused ? 'Pause' : 'Play'}
+                                </Button>
+                                <IconButton
+                                    color="secondary"
+                                    onClick={() => handleOpenAddToPlaylistDialog(song)}
+                                >
+                                    <PlaylistAdd />
+                                </IconButton>
+                            </Box>
                         </Paper>
                     ))}
                 </Grid>
 
-                {/* Right Column - Playlist and Music Player */}
+                {/* Right Column */}
                 <Grid item xs={12} md={4}>
-                    <Box mb={3}>
-                        <Typography variant="h6">Playlist</Typography>
-                        <List>
-                            {playlist.length > 0 ? (
-                                playlist.map((song, index) => (
-                                    <ListItem key={index}>
-                                        <ListItemText
-                                            primary={song.title}
-                                            secondary={song.artist}
-                                        />
-                                        <IconButton onClick={() => handleRemoveFromPlaylist(song)}>
-                                            <Delete />
-                                        </IconButton>
-                                    </ListItem>
-                                ))
-                            ) : (
-                                <Typography variant="body2" color="textSecondary">
-                                    Your playlist is empty.
-                                </Typography>
-                            )}
-                        </List>
-                    </Box>
-
-                    {/* Music Player */}
-                    <Box mb={3}>
+                    <Box>
                         <Typography variant="h6">Now Playing</Typography>
                         {nowPlaying ? (
-                            <Paper elevation={2} sx={{ p: 2 }}>
-                                <Typography variant="body1">{nowPlaying.title}</Typography>
+                            <Paper elevation={3} sx={{
+                                p: 2, borderRadius: 2,
+                                background: 'linear-gradient(to right, #e3f2fd, #f1f8e9)',
+                            }}>
+                                <Typography variant="h6" gutterBottom>{nowPlaying.title}</Typography>
                                 <Typography variant="body2" color="textSecondary">{nowPlaying.artist}</Typography>
                                 <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
-                                    <IconButton onClick={() => handlePlayPause(nowPlaying)}>
-                                        {nowPlaying && !audio?.paused ? <Pause /> : <PlayArrow />}
+                                    <IconButton onClick={() => handlePlayPause(nowPlaying)} color="primary">
+                                        {audio?.paused ? <PlayArrow /> : <Pause />}
                                     </IconButton>
                                     <Slider
                                         value={progress}
                                         onChange={handleProgressChange}
-                                        aria-labelledby="continuous-slider"
-                                        sx={{ mx: 2 }}
+                                        sx={{ mx: 2, flex: 1 }}
                                     />
                                     <VolumeUp />
                                     <Slider
                                         value={volume}
                                         onChange={handleVolumeChange}
-                                        aria-labelledby="volume-slider"
-                                        sx={{ ml: 2, width: 100 }}
+                                        sx={{ width: 100, ml: 1 }}
                                     />
                                 </Box>
                             </Paper>
                         ) : (
-                            <Typography variant="body2" color="textSecondary">
-                                No song is currently playing.
-                            </Typography>
+                            <Typography>No song is playing.</Typography>
                         )}
                     </Box>
+
+                    <Box mt={3}>
+                        <Typography variant="h6">Playlists</Typography>
+                        {playlists.map((playlist, index) => (
+                            <Box key={index} mb={2}>
+                                <Typography variant="subtitle1">{playlist.name}</Typography>
+                                <List>
+                                    {playlist.songs.map((song) => (
+                                        <ListItem key={song.id}>
+                                            <ListItemText primary={song.title} secondary={song.artist} />
+                                            <IconButton
+                                                edge="end"
+                                                color="error"
+                                                onClick={() => handleRemoveFromPlaylist(song.id, playlist.name)}
+                                            >
+                                                <Delete />
+                                            </IconButton>
+                                        </ListItem>
+                                    ))}
+                                </List>
+                                <Button
+                                    variant="outlined"
+                                    color="primary"
+                                    startIcon={<PlaylistPlay />}
+                                    onClick={() => {
+                                        // Logic to play the playlist, e.g., playing the first song in the playlist
+                                        const firstSong = playlist.songs[0];
+                                        if (firstSong) {
+                                            handlePlayPause(firstSong);
+                                        }
+                                    }}
+                                >
+                                    Play Playlist
+                                </Button>
+                            </Box>
+                        ))}
+                    </Box>
+
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        startIcon={<PlaylistAdd />}
+                        onClick={() => setDialogOpen(true)}
+                        fullWidth
+                    >
+                        Create Playlist
+                    </Button>
                 </Grid>
             </Grid>
 
-            {/* Snackbar */}
+            {/* Create Playlist Dialog */}
+            <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
+                <DialogTitle>Create New Playlist</DialogTitle>
+                <DialogContent>
+                    <TextField
+                        label="Playlist Name"
+                        variant="outlined"
+                        fullWidth
+                        value={newPlaylistName}
+                        onChange={(e) => setNewPlaylistName(e.target.value)}
+                        sx={{ mb: 2 }}
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setDialogOpen(false)} color="primary">
+                        Cancel
+                    </Button>
+                    <Button onClick={handleCreatePlaylist} color="primary">
+                        Create
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            {/* Snackbar for notifications */}
             <Snackbar
                 open={snackbarOpen}
                 autoHideDuration={3000}

@@ -1,102 +1,124 @@
 import React, { useEffect, useState } from 'react';
 import {
-    Container,
-    Box,
-    Typography,
-    TextField,
-    Paper,
-    Grid,
-    Button,
-    AppBar,
-    Toolbar,
-    IconButton,
-    Menu,
-    MenuItem,
-    Avatar,
-    Snackbar,
-    Tooltip,
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableRow,
-    LinearProgress,
+    Container, Box, Typography, TextField, Paper, Grid, Button, AppBar, Toolbar, IconButton,
+    Menu, MenuItem, Avatar, Snackbar, Table, TableBody, TableCell, TableHead, TableRow, Slider
 } from '@mui/material';
+import { PlayArrow, Pause, VolumeUp, SkipNext, SkipPrevious, Download } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import { Download, PlayArrow, Pause } from '@mui/icons-material';
-import api from './services/api';
+
+const mockDownloads = [
+    { id: 1, title: 'Sample Song A', artist: 'Artist A', album: 'Album A', year: '2000', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3' },
+    { id: 2, title: 'Sample Song B', artist: 'Artist B', album: 'Album B', year: '2000', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3' },
+    { id: 3, title: 'Sample Song C', artist: 'Artist C', album: 'Album C', year: '2000', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3' },
+];
 
 const DownloadPage = () => {
     const [downloads, setDownloads] = useState([]);
     const [search, setSearch] = useState('');
     const [nowPlaying, setNowPlaying] = useState(null);
-    const [anchorEl, setAnchorEl] = useState(null);
+    const [audio, setAudio] = useState(null);
+    const [volume, setVolume] = useState(30);
+    const [progress, setProgress] = useState(0);
+    const [currentTime, setCurrentTime] = useState('00:00');
+    const [duration, setDuration] = useState('00:00');
+    const [playlist, setPlaylist] = useState([]);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
-    const [audio, setAudio] = useState(null);
-    const [downloadProgress, setDownloadProgress] = useState({});
-
+    const [anchorEl, setAnchorEl] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
-        const fetchDownloads = async () => {
-            try {
-                const response = await api.get('/downloads');
-                setDownloads(response.data);
-            } catch (error) {
-                console.error('Error fetching downloads:', error);
-            }
-        };
-        fetchDownloads();
+        setDownloads(mockDownloads);
     }, []);
+
+    useEffect(() => {
+        if (audio) {
+            const updateProgress = () => {
+                if (audio.duration) {
+                    setProgress((audio.currentTime / audio.duration) * 100);
+                    setCurrentTime(formatTime(audio.currentTime));
+                    setDuration(formatTime(audio.duration));
+                }
+            };
+            audio.addEventListener('timeupdate', updateProgress);
+            return () => {
+                audio.removeEventListener('timeupdate', updateProgress);
+            };
+        }
+    }, [audio]);
+
+    const formatTime = (time) => {
+        const minutes = Math.floor(time / 60);
+        const seconds = Math.floor(time % 60);
+        return `${minutes < 10 ? '0' + minutes : minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+    };
 
     const handlePlayPause = (item) => {
         if (nowPlaying?.id === item.id) {
             audio.paused ? audio.play() : audio.pause();
         } else {
-            if (audio) audio.pause();
+            audio?.pause();
             const newAudio = new Audio(item.url);
+            newAudio.volume = volume / 100;
+            newAudio.play().catch(() => console.error('Error playing audio.'));
             setAudio(newAudio);
-            newAudio.play();
             setNowPlaying(item);
         }
     };
 
-    const handleDownload = (item) => {
-        const url = item.url;
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = url.split('/').pop();
-        
-        const xhr = new XMLHttpRequest();
-        xhr.open('GET', url, true);
-        xhr.responseType = 'blob';
-        xhr.onprogress = (event) => {
-            if (event.lengthComputable) {
-                const progress = Math.round((event.loaded / event.total) * 100);
-                setDownloadProgress((prev) => ({ ...prev, [item.id]: progress }));
-            }
-        };
-        xhr.onload = () => {
-            const blob = new Blob([xhr.response]);
-            const downloadUrl = URL.createObjectURL(blob);
-            link.href = downloadUrl;
+    const handleNextTrack = () => {
+        const currentIndex = downloads.findIndex((item) => item.id === nowPlaying?.id);
+        const nextTrack = downloads[(currentIndex + 1) % downloads.length];
+        handlePlayPause(nextTrack);
+    };
+
+    const handlePreviousTrack = () => {
+        const currentIndex = downloads.findIndex((item) => item.id === nowPlaying?.id);
+        const prevTrack = downloads[(currentIndex - 1 + downloads.length) % downloads.length];
+        handlePlayPause(prevTrack);
+    };
+
+    const handleVolumeChange = (event, newValue) => {
+        setVolume(newValue);
+        if (audio) audio.volume = newValue / 100;
+    };
+
+    const handleProgressChange = (event, newValue) => {
+        if (audio) {
+            audio.currentTime = (newValue / 100) * audio.duration;
+            setProgress(newValue);
+        }
+    };
+
+    const handleAddToPlaylist = (item) => {
+        setPlaylist((prevPlaylist) => [...prevPlaylist, item]);
+        setSnackbarMessage(`${item.title} added to playlist`);
+        setSnackbarOpen(true);
+    };
+
+    const handleRemoveFromPlaylist = (item) => {
+        setPlaylist((prevPlaylist) => prevPlaylist.filter((song) => song.id !== item.id));
+        setSnackbarMessage(`${item.title} removed from playlist`);
+        setSnackbarOpen(true);
+    };
+
+    const handleDownload = () => {
+        if (nowPlaying) {
+            const link = document.createElement('a');
+            link.href = nowPlaying.url;
+            link.download = nowPlaying.title + '.mp3';
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-            setSnackbarMessage('Download completed');
+            setSnackbarMessage('Download started...');
             setSnackbarOpen(true);
-            setDownloadProgress((prev) => ({ ...prev, [item.id]: 100 }));
-        };
-        xhr.send();
-        setSnackbarMessage('Download started...');
-        setSnackbarOpen(true);
+        }
     };
 
     const handleProfileMenuOpen = (event) => setAnchorEl(event.currentTarget);
     const handleProfileMenuClose = () => setAnchorEl(null);
-    const handleNavigateToProfile = () => { setAnchorEl(null); navigate('/profile'); };
     const handleSnackbarClose = () => setSnackbarOpen(false);
+    const handleNavigateToProfile = () => { setAnchorEl(null); navigate('/profile'); };
 
     const filteredDownloads = downloads.filter((item) =>
         item.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -107,7 +129,7 @@ const DownloadPage = () => {
         <Container maxWidth="xl" sx={{ mt: 4 }}>
             <AppBar position="static" sx={{ mb: 4, backgroundColor: '#007AFF' }}>
                 <Toolbar>
-                    <Typography variant="h6" sx={{ flexGrow: 1 }}>Download Page</Typography>
+                    <Typography variant="h6" sx={{ flexGrow: 1 }}>Downloads</Typography>
                     <TextField
                         variant="outlined"
                         placeholder="Search for downloads"
@@ -127,8 +149,8 @@ const DownloadPage = () => {
             </AppBar>
 
             <Grid container spacing={3}>
-                <Grid item xs={12}>
-                    <Typography variant="h5" gutterBottom>Available Downloads</Typography>
+                <Grid item xs={12} md={9}>
+                    <Typography variant="h5" gutterBottom>Downloads</Typography>
                     <Paper elevation={3} sx={{ p: 2 }}>
                         {filteredDownloads.length === 0 ? (
                             <Typography variant="h6" align="center">No downloads available</Typography>
@@ -160,29 +182,74 @@ const DownloadPage = () => {
                                                     >
                                                         {nowPlaying?.id === item.id ? 'Pause' : 'Play'}
                                                     </Button>
-                                                    <Tooltip title="Download">
-                                                        <Button
-                                                            onClick={() => handleDownload(item)}
-                                                            variant="contained"
-                                                            color="secondary"
-                                                            startIcon={<Download />}
-                                                        >
-                                                            Download
+                                                    {playlist.some((song) => song.id === item.id) ? (
+                                                        <Button onClick={() => handleRemoveFromPlaylist(item)} variant="outlined" color="secondary">
+                                                            Remove from Playlist
                                                         </Button>
-                                                    </Tooltip>
+                                                    ) : (
+                                                        <Button onClick={() => handleAddToPlaylist(item)} variant="outlined" color="secondary">
+                                                            Add to Playlist
+                                                        </Button>
+                                                    )}
                                                 </Box>
-                                                {downloadProgress[item.id] !== undefined && (
-                                                    <Box sx={{ width: '100%', mt: 1 }}>
-                                                        {downloadProgress[item.id] < 100 && (
-                                                            <LinearProgress variant="determinate" value={downloadProgress[item.id]} />
-                                                        )}
-                                                    </Box>
-                                                )}
                                             </TableCell>
                                         </TableRow>
                                     ))}
                                 </TableBody>
                             </Table>
+                        )}
+                    </Paper>
+                </Grid>
+
+                {/* Now Playing Section */}
+                <Grid item xs={12} md={3}>
+                    <Typography variant="h5" gutterBottom>Now Playing</Typography>
+                    <Paper elevation={3} sx={{ p: 2, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                        <Box>
+                            <Typography variant="subtitle1">Now Playing:</Typography>
+                            <Typography variant="body1">
+                                {nowPlaying ? `${nowPlaying.title} - ${nowPlaying.artist}` : 'No track selected'}
+                            </Typography>
+                        </Box>
+                        {nowPlaying && (
+                            <Box mt={2} width="100%">
+                                {/* Timer */}
+                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <Typography variant="body2">{currentTime}</Typography>
+                                    <Typography variant="body2">{duration}</Typography>
+                                </Box>
+
+                                {/* Progress Bar */}
+                                <Slider value={progress} onChange={handleProgressChange} sx={{ mt: 2 }} />
+
+                                <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
+                                    <VolumeUp />
+                                    <Slider value={volume} onChange={handleVolumeChange} sx={{ width: 100, ml: 2 }} />
+                                </Box>
+
+                                {/* Play/Pause, Next/Previous */}
+                                <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 2 }}>
+                                    <IconButton onClick={handlePreviousTrack}>
+                                        <SkipPrevious />
+                                    </IconButton>
+                                    <IconButton onClick={() => handlePlayPause(nowPlaying)}>
+                                        {nowPlaying?.id ? (audio?.paused ? <PlayArrow /> : <Pause />) : <PlayArrow />}
+                                    </IconButton>
+                                    <IconButton onClick={handleNextTrack}>
+                                        <SkipNext />
+                                    </IconButton>
+                                </Box>
+
+                                <Button
+                                    variant="contained"
+                                    color="secondary"
+                                    onClick={handleDownload}
+                                    startIcon={<Download />}
+                                    sx={{ mt: 2 }}
+                                >
+                                    Download
+                                </Button>
+                            </Box>
                         )}
                     </Paper>
                 </Grid>
@@ -194,14 +261,6 @@ const DownloadPage = () => {
                 onClose={handleSnackbarClose}
                 message={snackbarMessage}
             />
-
-            {nowPlaying && (
-                <Box mt={4} display="flex" justifyContent="center">
-                    <audio controls src={nowPlaying.url}>
-                        Your browser does not support the audio element.
-                    </audio>
-                </Box>
-            )}
         </Container>
     );
 };

@@ -1,297 +1,459 @@
 import React, { useState, useEffect } from 'react';
 import {
-    Container, AppBar, Toolbar, Typography, Grid, Box, Button, TextField, IconButton, Menu, MenuItem, Avatar, Paper, Slider
+<<<<<<< HEAD
+    Container,
+    Box,
+    Typography,
+    Button,
+    AppBar,
+    Toolbar,
+    IconButton,
+    Avatar,
+    Menu,
+    MenuItem,
+    TextField,
+    Grid,
+    Paper,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableRow,
+    List,
+    ListItem,
+    ListItemText,
 } from '@mui/material';
-import { CloudUpload, PlayArrow, Pause, VolumeUp, MoreVert, PlaylistAdd, FileDownload, Delete, Edit, Share, Shuffle, SkipPrevious, SkipNext, Repeat } from '@mui/icons-material'; // Added missing imports for Shuffle, SkipPrevious, SkipNext, and Repeat
+import { useNavigate } from 'react-router-dom';
+import api from './services/api'; // Your axios instance
 
-const UploadMusic = () => {
-    const [files, setFiles] = useState([]);
-    const [anchorEl, setAnchorEl] = useState(null);
+const MusicDashboard = () => {
+    const [music, setMusic] = useState([]);
+    const [topCharts, setTopCharts] = useState([]);
+    const [listenAgain, setListenAgain] = useState([]);
+    const [search, setSearch] = useState('');
     const [nowPlaying, setNowPlaying] = useState(null);
-    const [audio, setAudio] = useState(null);
-    const [progress, setProgress] = useState(0);
-    const [volume, setVolume] = useState(30);
-    const [menuAnchorEl, setMenuAnchorEl] = useState(null);
-    const [selectedFile, setSelectedFile] = useState(null);
+    const [playlist, setPlaylist] = useState([]);
+    const [anchorEl, setAnchorEl] = useState(null);
+
+    const navigate = useNavigate(); // Initialize useNavigate
+=======
+    Box, Typography, Button, AppBar, Toolbar, IconButton, Avatar,
+    Menu, MenuItem, TextField, Grid, Paper, List, ListItem,
+    ListItemButton, ListItemIcon, ListItemText, Divider,
+} from '@mui/material';
+import {
+    Home as HomeIcon, LibraryMusic as MusicIcon, PlaylistPlay as PlaylistIcon,
+    Download as DownloadIcon, Settings as SettingsIcon,
+} from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
+import api from './services/api';
+
+const MusicDashboard = () => {
+    const [music, setMusic] = useState([]);
+    const [search, setSearch] = useState('');
+    const [anchorEl, setAnchorEl] = useState(null);
+
+    const navigate = useNavigate();
+>>>>>>> 8cd6bdb (the home,settings,download)
 
     useEffect(() => {
-        if (audio) {
-            const updateProgress = () => {
-                if (audio.duration) {
-                    setProgress((audio.currentTime / audio.duration) * 100);
-                }
-            };
-            audio.addEventListener('timeupdate', updateProgress);
-            return () => {
-                audio.removeEventListener('timeupdate', updateProgress);
-            };
-        }
-    }, [audio]);
+        const fetchMusic = async () => {
+            try {
+                const response = await api.get('/music');
+                setMusic(response.data);
+            } catch (error) {
+                console.error('Error fetching music:', error);
+            }
+        };
 
-    const handleFileChange = (event) => {
-        setFiles([...files, ...event.target.files]);
+<<<<<<< HEAD
+        const fetchTopCharts = async () => {
+            try {
+                const response = await api.get('/top-charts');
+                setTopCharts(response.data);
+            } catch (error) {
+                console.error('Error fetching top charts:', error);
+            }
+        };
+
+        const fetchListenAgain = async () => {
+            try {
+                const response = await api.get('/listen-again');
+                setListenAgain(response.data);
+            } catch (error) {
+                console.error('Error fetching listen again songs:', error);
+            }
+        };
+
+        fetchMusic();
+        fetchTopCharts();
+        fetchListenAgain();
+    }, []);
+
+    const handlePlay = (song) => {
+        setNowPlaying(song);
     };
 
-    const handleProfileMenuOpen = (event) => setAnchorEl(event.currentTarget);
-    const handleProfileMenuClose = () => setAnchorEl(null);
-
-    const handleUpload = () => {
-        // Handle the file upload logic here
-        files.forEach(file => {
-            console.log('Uploading:', file.name);
-            // Add your upload logic here
-        });
+    const handleAddToPlaylist = (song) => {
+        setPlaylist([...playlist, song]);
     };
 
-    const handlePlayPause = (file) => {
-        if (nowPlaying?.name === file.name) {
-            audio.paused ? audio.play() : audio.pause();
-        } else {
-            if (audio) audio.pause();
-            const newAudio = new Audio(URL.createObjectURL(file));
-            newAudio.volume = volume / 100;
-            newAudio.play().catch(() => console.error('Error playing audio.'));
-            setAudio(newAudio);
-            setNowPlaying(file);
-        }
+    const handleProfileMenuOpen = (event) => {
+        setAnchorEl(event.currentTarget);
     };
 
-    const handleVolumeChange = (event, newValue) => {
-        setVolume(newValue);
-        if (audio) audio.volume = newValue / 100;
+    const handleProfileMenuClose = () => {
+        setAnchorEl(null);
     };
 
-    const handleProgressChange = (event, newValue) => {
-        if (audio) {
-            audio.currentTime = (newValue / 100) * audio.duration;
-            setProgress(newValue);
-        }
+    const handleLogout = () => {
+        // Clear authentication data (e.g., token)
+        localStorage.removeItem('authToken'); // Example: remove token from localStorage
+        navigate('/'); // Navigate to homepage
     };
 
-    const handleMenuOpen = (event, file) => {
-        setMenuAnchorEl(event.currentTarget);
-        setSelectedFile(file);
+    const handleNavigateToProfile = () => {
+        setAnchorEl(null); // Close the menu
+        navigate('/profile'); // Navigate to the Profile page
     };
 
-    const handleMenuClose = () => {
-        setMenuAnchorEl(null);
-        setSelectedFile(null);
+    const handleNavigateToPlaylist = () => {
+        navigate('/playlist', { state: { playlist } }); // Pass the playlist to the PlaylistPage
     };
 
-    const handleRename = () => {
-        // Logic to rename the selected file
-        handleMenuClose();
-    };
-
-    const handleAddToPlaylist = () => {
-        // Logic to add the selected file to a playlist
-        handleMenuClose();
-    };
-
-    const handleAddToDownloads = () => {
-        // Logic to add the selected file to downloads
-        handleMenuClose();
-    };
-
-    const handleShare = () => {
-        // Logic to share the selected file
-        handleMenuClose();
-    };
-
-    const handleDelete = () => {
-        setFiles(files.filter(file => file !== selectedFile));
-        handleMenuClose();
-    };
-
-    const handlePlayNext = () => {
-        // Logic to play the selected file next
-        handleMenuClose();
-    };
-
-    // Format time into MM:SS
-    const formatTime = (time) => {
-        const minutes = Math.floor(time / 60);
-        const seconds = Math.floor(time % 60);
-        return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-    };
-
-    // Handle Shuffle Logic (placeholder)
-    const handleShuffle = () => {
-        console.log("Shuffle activated!");
-    };
-
-    // Handle Repeat Logic (placeholder)
-    const handleRepeat = () => {
-        console.log("Repeat activated!");
-    };
-
-    // Handle Next Song Logic (placeholder)
-    const handleNext = () => {
-        console.log("Next song!");
-    };
-
-    // Handle Previous Song Logic (placeholder)
-    const handlePrevious = () => {
-        console.log("Previous song!");
-    };
+    const filteredMusic = music.filter((song) =>
+        song.title.toLowerCase().includes(search.toLowerCase()) ||
+        song.artist.toLowerCase().includes(search.toLowerCase())
+    );
 
     return (
         <Container maxWidth="xl" sx={{ mt: 4 }}>
             {/* Header */}
-            <AppBar position="static" sx={{ mb: 3, backgroundColor: '#1c1c1e' }}>
+            <AppBar position="static" sx={{ mb: 4 }}>
                 <Toolbar>
-                    <Typography variant="h6" sx={{ flexGrow: 1 }}>Upload Music</Typography>
+                    <Typography variant="h6" sx={{ flexGrow: 1 }}>
+                        ViBeat
+                    </Typography>
+                    <Button
+                        variant="contained"
+                        color="secondary"
+                        onClick={handleNavigateToPlaylist}
+                        sx={{ mr: 2 }}
+                    >
+                        Playlist
+                    </Button>
                     <TextField
                         variant="outlined"
-                        placeholder="Search songs"
-                        sx={{ backgroundColor: 'white', borderRadius: 1 }}
-                        size="small"
+                        placeholder="Search for songs"
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        InputProps={{
+                            sx: { backgroundColor: 'white', borderRadius: '4px' }
+                        }}
                     />
                     <IconButton onClick={handleProfileMenuOpen}>
-                        <Avatar src="/static/images/avatar/1.jpg" />
+                        <Avatar src="/static/images/avatar/1.jpg" alt="Profile" />
                     </IconButton>
-                    <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleProfileMenuClose}>
-                        <MenuItem>Profile</MenuItem>
-                        <MenuItem>Settings</MenuItem>
-                        <MenuItem>Log Out</MenuItem>
+                    <Menu
+                        anchorEl={anchorEl}
+                        open={Boolean(anchorEl)}
+                        onClose={handleProfileMenuClose}
+                    >
+                        <MenuItem onClick={handleNavigateToProfile}>Profile</MenuItem>
+                        <MenuItem onClick={handleProfileMenuClose}>Settings</MenuItem>
+                        <MenuItem onClick={handleLogout}>Log Out</MenuItem>
                     </Menu>
                 </Toolbar>
             </AppBar>
 
-            {/* Upload Section */}
-            <Paper elevation={3} sx={{
-                p: 4, textAlign: 'center', background: 'linear-gradient(to right, #ff69b4, #ffcc00)', borderRadius: 2
-            }}>
-                <CloudUpload sx={{ fontSize: 50, color: '#007bff' }} />
-                <Typography variant="h6" sx={{ mt: 2 }}>Drag and drop files to upload</Typography>
-                <Typography variant="body2" color="textSecondary">Your music will be public until you publish them.</Typography>
-                <input
-                    type="file"
-                    id="fileInput"
-                    multiple
-                    style={{ display: 'none' }}
-                    onChange={handleFileChange}
-                />
-                <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={() => document.getElementById('fileInput').click()}
-                    sx={{ mt: 2 }}
-                >
-                    Select Files
-                </Button>
-            </Paper>
+            <Grid container spacing={3}>
+                {/* Left Column - Top Charts and Listen Again */}
+                <Grid item xs={12} md={3}>
+                    <Box mb={3}>
+                        <Typography variant="h6">Top Charts</Typography>
+                        {topCharts.map((song) => (
+=======
+        fetchMusic();
+    }, []);
 
-            {/* Display selected files */}
-            {files.length > 0 && (
-                <Box sx={{ mt: 4 }}>
-                    <Typography variant="h6">My Music Upload List</Typography>
-                    {files.map((file, index) => (
-                        <Paper
-                            key={index}
-                            elevation={3}
+    const handleProfileMenuOpen = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleProfileMenuClose = () => {
+        setAnchorEl(null);
+    };
+
+    const handleLogout = () => {
+        localStorage.removeItem('authToken'); // Example: remove token from localStorage
+        navigate('/'); // Navigate to homepage
+    };
+
+    const handleNavigate = (path) => {
+        navigate(path);
+    };
+
+    return (
+        <Box sx={{ display: 'flex', height: '100vh' }}>
+            {/* Left Sidebar */}
+            <Box
+                sx={{
+                    width: 240,
+                    bgcolor: 'primary.main',
+                    color: 'white',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    pt: 2,
+                }}
+            >
+                <Typography variant="h6" gutterBottom>
+                    ViBeat
+                </Typography>
+                <List>
+                    <ListItem disablePadding>
+                        <ListItemButton onClick={() => handleNavigate('/home')}>
+                            <ListItemIcon>
+                                <HomeIcon sx={{ color: 'white' }} />
+                            </ListItemIcon>
+                            <ListItemText primary="Home" />
+                        </ListItemButton>
+                    </ListItem>
+                    <ListItem disablePadding>
+                        <ListItemButton onClick={() => handleNavigate('/music')}>
+                            <ListItemIcon>
+                                <MusicIcon sx={{ color: 'white' }} />
+                            </ListItemIcon>
+                            <ListItemText primary="Music" />
+                        </ListItemButton>
+                    </ListItem>
+                    <ListItem disablePadding>
+                        <ListItemButton onClick={() => handleNavigate('/playlist')}> {/* Navigate to Playlist */}
+                            <ListItemIcon>
+                                <PlaylistIcon sx={{ color: 'white' }} />
+                            </ListItemIcon>
+                            <ListItemText primary="Playlists" />
+                        </ListItemButton>
+                    </ListItem>
+                    <ListItem disablePadding>
+                        <ListItemButton onClick={() => handleNavigate('/downloads')}>
+                            <ListItemIcon>
+                                <DownloadIcon sx={{ color: 'white' }} />
+                            </ListItemIcon>
+                            <ListItemText primary="Downloads" />
+                        </ListItemButton>
+                    </ListItem>
+                    <Divider sx={{ bgcolor: 'white' }} />
+                    <ListItem disablePadding>
+                        <ListItemButton onClick={() => handleNavigate('/settings')}>
+                            <ListItemIcon>
+                                <SettingsIcon sx={{ color: 'white' }} />
+                            </ListItemIcon>
+                            <ListItemText primary="Settings" />
+                        </ListItemButton>
+                    </ListItem>
+                </List>
+            </Box>
+
+            {/* Main Content */}
+            <Box sx={{ flexGrow: 1 }}>
+                {/* Header */}
+                <AppBar position="static" sx={{ bgcolor: 'primary.dark' }}>
+                    <Toolbar>
+                        <Typography variant="h6" sx={{ flexGrow: 1 }}>
+                            Hello, User!
+                        </Typography>
+                        <TextField
+                            variant="outlined"
+                            placeholder="Search for songs"
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            size="small"
                             sx={{
-                                display: 'flex', justifyContent: 'space-between',
-                                alignItems: 'center', p: 2, mb: 2, borderRadius: 2,
-                                background: 'linear-gradient(to right, #f9f9f9, #fff)',
+                                bgcolor: 'white',
+                                borderRadius: 1,
+                                mr: 2,
+                                width: 300,
                             }}
+                        />
+                        <IconButton onClick={handleProfileMenuOpen}>
+                            <Avatar src="/static/images/avatar/1.jpg" alt="Profile" />
+                        </IconButton>
+                        <Menu
+                            anchorEl={anchorEl}
+                            open={Boolean(anchorEl)}
+                            onClose={handleProfileMenuClose}
                         >
-                            <Box>
-                                <Typography variant="h6">{file.name}</Typography>
-                                <Typography variant="body2" color="textSecondary">Uploaded by You</Typography>
-                            </Box>
-                            <Box>
+                            <MenuItem onClick={() => handleNavigate('/profile')}>Profile</MenuItem>
+                            <MenuItem onClick={() => handleNavigate('/settings')}>Settings</MenuItem>
+                            <MenuItem onClick={handleLogout}>Log Out</MenuItem>
+                        </Menu>
+                    </Toolbar>
+                </AppBar>
+
+                {/* Main Grid Content */}
+                <Grid container spacing={3} sx={{ p: 3 }}>
+                    {/* Left Section */}
+                    <Grid item xs={12} md={4}>
+                        <Typography variant="h6" gutterBottom>
+                            Just for You
+                        </Typography>
+                        {music.slice(0, 5).map((song) => (
+>>>>>>> 8cd6bdb (the home,settings,download)
+                            <Paper key={song.id} elevation={2} sx={{ p: 2, mb: 1 }}>
+                                <Typography variant="body1">{song.title}</Typography>
+                                <Typography variant="body2" color="textSecondary">
+                                    {song.artist}
+                                </Typography>
                                 <Button
+                                    onClick={() => handleAddToPlaylist(song)}
                                     variant="contained"
-                                    color="primary"
-                                    startIcon={nowPlaying?.name === file.name && !audio?.paused ? <Pause /> : <PlayArrow />}
-                                    onClick={() => handlePlayPause(file)}
-                                    sx={{ mr: 1 }}
+                                    color="secondary"
+<<<<<<< HEAD
+=======
+                                    size="small"
+>>>>>>> 8cd6bdb (the home,settings,download)
+                                    sx={{ mt: 1 }}
                                 >
-                                    {nowPlaying?.name === file.name && !audio?.paused ? 'Pause' : 'Play'}
+                                    Add to Playlist
                                 </Button>
-                                <IconButton onClick={(e) => handleMenuOpen(e, file)}>
-                                    <MoreVert />
-                                </IconButton>
-                                <Menu
-                                    anchorEl={menuAnchorEl}
-                                    open={Boolean(menuAnchorEl)}
-                                    onClose={handleMenuClose}
+                            </Paper>
+                        ))}
+<<<<<<< HEAD
+                    </Box>
+
+                    <Box mb={3}>
+                        <Typography variant="h6">Listen Again</Typography>
+                        {listenAgain.map((song) => (
+=======
+                    </Grid>
+
+                    {/* Right Section */}
+                    <Grid item xs={12} md={8}>
+                        <Typography variant="h6" gutterBottom>
+                            Recently Played
+                        </Typography>
+                        {music.slice(5, 10).map((song) => (
+>>>>>>> 8cd6bdb (the home,settings,download)
+                            <Paper key={song.id} elevation={2} sx={{ p: 2, mb: 1 }}>
+                                <Typography variant="body1">{song.title}</Typography>
+                                <Typography variant="body2" color="textSecondary">
+                                    {song.artist}
+                                </Typography>
+                                <Button
+<<<<<<< HEAD
+                                    onClick={() => handleAddToPlaylist(song)}
+                                    variant="contained"
+                                    color="secondary"
+=======
+                                    variant="contained"
+                                    color="secondary"
+                                    size="small"
+>>>>>>> 8cd6bdb (the home,settings,download)
+                                    sx={{ mt: 1 }}
                                 >
-                                    <MenuItem onClick={handleRename}><Edit /> Rename</MenuItem>
-                                    <MenuItem onClick={handleAddToPlaylist}><PlaylistAdd /> Add to Playlist</MenuItem>
-                                    <MenuItem onClick={handleAddToDownloads}><FileDownload /> Add to Downloads</MenuItem>
-                                    <MenuItem onClick={handleShare}><Share /> Share</MenuItem>
-                                    <MenuItem onClick={handleDelete}><Delete /> Delete</MenuItem>
-                                    <MenuItem onClick={handlePlayNext}><PlayArrow /> Play Next</MenuItem>
-                                </Menu>
-                            </Box>
-                        </Paper>
-                    ))}
-                </Box>
-            )}
+                                    Add to Playlist
+                                </Button>
+                            </Paper>
+                        ))}
+<<<<<<< HEAD
+                    </Box>
+                </Grid>
 
-            {/* Now Playing Section */}
-            {nowPlaying && (
-                <Box mt={3}>
-                    <Typography variant="h6" sx={{ mb: 1 }}>Now Playing</Typography>
-                    <Paper elevation={3} sx={{
-                        p: 3,
-                        borderRadius: 2,
-                        background: 'linear-gradient(to right, #e3f2fd, #f1f8e9)',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        textAlign: 'center'
-                    }}>
-                        {/* Song Title and Info */}
-                        <Typography variant="h6" gutterBottom>{nowPlaying.name}</Typography>
-                        <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>Uploaded by You</Typography>
-
-                        {/* Playback Controls */}
-                        <Box sx={{ display: 'flex', alignItems: 'center', width: '100%', justifyContent: 'center' }}>
-                            <IconButton onClick={() => handleShuffle()} color="primary" size="large">
-                                <Shuffle />
-                            </IconButton>
-                            <IconButton onClick={() => handlePrevious()} color="primary" size="large">
-                                <SkipPrevious />
-                            </IconButton>
-                            <IconButton onClick={() => handlePlayPause(nowPlaying)} color="primary" size="large">
-                                {audio?.paused ? <PlayArrow fontSize="large" /> : <Pause fontSize="large" />}
-                            </IconButton>
-                            <IconButton onClick={() => handleNext()} color="primary" size="large">
-                                <SkipNext />
-                            </IconButton>
-                            <IconButton onClick={() => handleRepeat()} color="primary" size="large">
-                                <Repeat />
-                            </IconButton>
-                        </Box>
-
-                        {/* Progress Slider and Timers */}
-                        <Box sx={{ display: 'flex', alignItems: 'center', width: '100%', mt: 2 }}>
-                            <Typography variant="caption" sx={{ mr: 1 }}>{formatTime(audio?.currentTime || 0)}</Typography>
-                            <Slider
-                                value={progress}
-                                onChange={handleProgressChange}
-                                sx={{ mx: 2, flex: 1 }}
-                            />
-                            <Typography variant="caption" sx={{ ml: 1 }}>{formatTime(audio?.duration || 0)}</Typography>
-                        </Box>
-
-                        {/* Volume Control */}
-                        <Box sx={{ display: 'flex', alignItems: 'center', width: '50%', mt: 1 }}>
-                            <VolumeUp />
-                            <Slider
-                                value={volume}
-                                onChange={handleVolumeChange}
-                                sx={{ mx: 2 }}
-                            />
-                        </Box>
+                {/* Middle Column - Music List */}
+                <Grid item xs={12} md={6}>
+                    <Typography variant="h5" gutterBottom>
+                        Music List
+                    </Typography>
+                    <Paper elevation={3} sx={{ p: 2 }}>
+                        <Table>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>Title</TableCell>
+                                    <TableCell>Artist</TableCell>
+                                    <TableCell>Album</TableCell>
+                                    <TableCell>Year</TableCell>
+                                    <TableCell>Actions</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {filteredMusic.map((song) => (
+                                    <TableRow key={song.id}>
+                                        <TableCell>{song.title}</TableCell>
+                                        <TableCell>{song.artist}</TableCell>
+                                        <TableCell>{song.album}</TableCell>
+                                        <TableCell>{song.year}</TableCell>
+                                        <TableCell>
+                                            <Button
+                                                onClick={() => handlePlay(song)}
+                                                variant="contained"
+                                                color="primary"
+                                            >
+                                                Play
+                                            </Button>
+                                            <Button
+                                                onClick={() => handleAddToPlaylist(song)}
+                                                variant="contained"
+                                                color="secondary"
+                                                sx={{ ml: 1 }}
+                                            >
+                                                Add to Playlist
+                                            </Button>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
                     </Paper>
-                </Box>
-            )}
+                </Grid>
+
+                {/* Right Column - Now Playing and Playlist */}
+                <Grid item xs={12} md={3}>
+                    {nowPlaying && (
+                        <Box mb={3}>
+                            <Typography variant="h6">Now Playing</Typography>
+                            <Paper elevation={3} sx={{ p: 2 }}>
+                                <Typography variant="body1">{nowPlaying.title}</Typography>
+                                <Typography variant="body2" color="textSecondary">
+                                    {nowPlaying.artist}
+                                </Typography>
+                            </Paper>
+                        </Box>
+                    )}
+
+                    <Box mb={3}>
+                        <Typography variant="h6">Playlist</Typography>
+                        <List>
+                            {playlist.slice(0, 3).map((song, index) => (
+                                <ListItem key={index}>
+                                    <ListItemText
+                                        primary={song.title}
+                                        secondary={`${song.artist} • ${song.album}`}
+                                    />
+                                </ListItem>
+                            ))}
+                        </List>
+                        {playlist.length > 0 && (
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={handleNavigateToPlaylist}
+                                sx={{ mt: 2 }}
+                            >
+                                View Full Playlist
+                            </Button>
+                        )}
+                    </Box>
+                </Grid>
+            </Grid>
         </Container>
+=======
+                    </Grid>
+                </Grid>
+            </Box>
+        </Box>
+>>>>>>> 8cd6bdb (the home,settings,download)
     );
 };
 
-export default UploadMusic;
+export default MusicDashboard;

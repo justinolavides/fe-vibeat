@@ -9,6 +9,11 @@ const mockMusic = [
     { id: 1, title: 'Song A', artist: 'Artist 1', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3' },
     { id: 2, title: 'Song B', artist: 'Artist 2', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3' },
     { id: 3, title: 'Song C', artist: 'Artist 3', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3' },
+    { id: 4, title: 'Making Love Out of Nothing at All', artist: 'Air Supply', url: 'https://www.youtube.com/watch?v=pdRVD0OJg3c' },
+    { id: 5, title: 'APT.', artist: 'BrunoMars & Rose', url: 'https://www.youtube.com/watch?v=i_SsnRdgitA' },
+    { id: 6, title: 'BoB Nothin On You', artist: ' Bruno Mars Lyrics Bruno Mars Jason Mraz', url: 'https://www.youtube.com/watch?v=-5heGER5xwc' },
+    { id: 7, title: 'Together', artist: 'Ne-Yo ', url: 'https://www.youtube.com/watch?v=DEhLOH7sitA' },
+    { id: 8, title: 'Marry Me', artist: 'Jason Derulo', url: 'https://www.youtube.com/watch?v=QEMDL7bljbw' },
 ];
 
 const Playlist = () => {
@@ -28,7 +33,13 @@ const Playlist = () => {
     const [selectedSong, setSelectedSong] = useState(null);
 
     useEffect(() => {
-        setMusic(mockMusic);
+        setMusic(mockMusic); // Setting up the mock music, including the Air Supply songs
+
+        // Load the YouTube API script
+        const tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        const firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
     }, []);
 
     useEffect(() => {
@@ -45,20 +56,47 @@ const Playlist = () => {
         }
     }, [audio]);
 
+    const [player, setPlayer] = useState(null);
+
+    useEffect(() => {
+        // Initialize YouTube player when the API script is loaded
+        window.onYouTubeIframeAPIReady = () => {
+            const newPlayer = new window.YT.Player('youtube-player', {
+                events: {
+                    'onReady': () => {
+                        setPlayer(newPlayer);
+                    }
+                }
+            });
+        };
+    }, []);
+
     const handlePlayPause = (song) => {
-        if (!song.url) {
-            console.error('Song URL is missing');
-            return;
-        }
-        if (nowPlaying?.id === song.id) {
-            audio.paused ? audio.play() : audio.pause();
-        } else {
-            if (audio) audio.pause();
-            const newAudio = new Audio(song.url);
-            newAudio.volume = volume / 100;
-            newAudio.play().catch(() => console.error('Error playing audio.'));
-            setAudio(newAudio);
+        if (song.url.includes('youtube.com')) {
             setNowPlaying(song);
+            const videoId = song.url.split('v=')[1];
+            if (player) {
+                player.loadVideoById(videoId);
+                player.playVideo();
+            }
+        } else {
+            // Handle audio play/pause
+            if (nowPlaying?.id === song.id) {
+                audio.paused ? audio.play() : audio.pause();
+            } else {
+                if (audio) audio.pause();
+                const newAudio = new Audio(song.url);
+                newAudio.volume = volume / 100;
+                newAudio.play().catch(() => console.error('Error playing audio.'));
+                setAudio(newAudio);
+                setNowPlaying(song);
+            }
+        }
+    };
+
+    const handlePause = () => {
+        if (player) {
+            player.pauseVideo();
         }
     };
 
@@ -172,140 +210,110 @@ const Playlist = () => {
                                 <Typography variant="body2" color="textSecondary">{song.artist}</Typography>
                             </Box>
                             <Box>
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                startIcon={nowPlaying?.id === song.id ? <Pause /> : <PlayArrow />}
+                                onClick={() => handlePlayPause(song)}
+                                sx={{ mr: 1 }}
+                            >
+                                {nowPlaying?.id === song.id ? 'Pause' : 'Play'}
+                            </Button>
+                            <IconButton
+                                color="secondary"
+                                onClick={() => handleOpenAddToPlaylistDialog(song)}
+                            >
+                                <PlaylistAdd />
+                            </IconButton>
+                        </Box>
+                    </Paper>
+                ))}
+            </Grid>
+
+            {/* Right Column */}
+            <Grid item xs={12} md={4}>
+                <Box>
+                    <Typography variant="h6">Now Playing</Typography>
+                    {nowPlaying ? (
+                        <Paper elevation={3} sx={{
+                            p: 2, mb: 2, borderRadius: 2, display: 'flex', flexDirection: 'column',
+                            justifyContent: 'center', alignItems: 'center',
+                        }}>
+                            <Typography variant="h6">{nowPlaying.title}</Typography>
+                            <Typography variant="body2" color="textSecondary">{nowPlaying.artist}</Typography>
+                            {/* If it's a YouTube link, embed the video */}
+                            {nowPlaying.url.includes('youtube.com') ? (
+                                <iframe
+                                    id="youtube-player"
+                                    width="100%"
+                                    height="315"
+                                    src={`https://www.youtube.com/embed/${nowPlaying.url.split('v=')[1]}`}
+                                    frameBorder="0"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    allowFullScreen
+                                />
+                            ) : (
+                                <Slider
+                                    value={progress}
+                                    onChange={handleProgressChange}
+                                    sx={{ width: '100%' }}
+                                />
+                            )}
+                            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
                                 <Button
                                     variant="contained"
                                     color="primary"
-                                    startIcon={nowPlaying?.id === song.id && !audio?.paused ? <Pause /> : <PlayArrow />}
-                                    onClick={() => handlePlayPause(song)}
+                                    startIcon={<Pause />}
+                                    onClick={handlePause}
                                     sx={{ mr: 1 }}
                                 >
-                                    {nowPlaying?.id === song.id && !audio?.paused ? 'Pause' : 'Play'}
+                                    Pause
                                 </Button>
-                                <IconButton
-                                    color="secondary"
-                                    onClick={() => handleOpenAddToPlaylistDialog(song)}
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    startIcon={<PlayArrow />}
+                                    onClick={() => handlePlayPause(nowPlaying)}
                                 >
-                                    <PlaylistAdd />
-                                </IconButton>
+                                    Play
+                                </Button>
                             </Box>
                         </Paper>
-                    ))}
-                </Grid>
-
-                {/* Right Column */}
-                <Grid item xs={12} md={4}>
-                    <Box>
-                        <Typography variant="h6">Now Playing</Typography>
-                        {nowPlaying ? (
-                            <Paper elevation={3} sx={{
-                                p: 2, borderRadius: 2,
-                                background: 'linear-gradient(to right, #e3f2fd, #f1f8e9)',
-                            }}>
-                                <Typography variant="h6" gutterBottom>{nowPlaying.title}</Typography>
-                                <Typography variant="body2" color="textSecondary">{nowPlaying.artist}</Typography>
-                                <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
-                                    <IconButton onClick={() => handlePlayPause(nowPlaying)} color="primary">
-                                        {audio?.paused ? <PlayArrow /> : <Pause />}
-                                    </IconButton>
-                                    <Slider
-                                        value={progress}
-                                        onChange={handleProgressChange}
-                                        sx={{ mx: 2, flex: 1 }}
-                                    />
-                                    <VolumeUp />
-                                    <Slider
-                                        value={volume}
-                                        onChange={handleVolumeChange}
-                                        sx={{ width: 100, ml: 1 }}
-                                    />
-                                </Box>
-                            </Paper>
-                        ) : (
-                            <Typography>No song is playing.</Typography>
-                        )}
-                    </Box>
-
-                    <Box mt={3}>
-                        <Typography variant="h6">Playlists</Typography>
-                        {playlists.map((playlist, index) => (
-                            <Box key={index} mb={2}>
-                                <Typography variant="subtitle1">{playlist.name}</Typography>
-                                <List>
-                                    {playlist.songs.map((song) => (
-                                        <ListItem key={song.id}>
-                                            <ListItemText primary={song.title} secondary={song.artist} />
-                                            <IconButton
-                                                edge="end"
-                                                color="error"
-                                                onClick={() => handleRemoveFromPlaylist(song.id, playlist.name)}
-                                            >
-                                                <Delete />
-                                            </IconButton>
-                                        </ListItem>
-                                    ))}
-                                </List>
-                                <Button
-                                    variant="outlined"
-                                    color="primary"
-                                    startIcon={<PlaylistPlay />}
-                                    onClick={() => {
-                                        // Logic to play the playlist, e.g., playing the first song in the playlist
-                                        const firstSong = playlist.songs[0];
-                                        if (firstSong) {
-                                            handlePlayPause(firstSong);
-                                        }
-                                    }}
-                                >
-                                    Play Playlist
-                                </Button>
-                            </Box>
-                        ))}
-                    </Box>
-
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        startIcon={<PlaylistAdd />}
-                        onClick={() => setDialogOpen(true)}
-                        fullWidth
-                    >
-                        Create Playlist
-                    </Button>
-                </Grid>
+                    ) : (
+                        <Typography>No song is playing.</Typography>
+                    )}
+                </Box>
             </Grid>
+        </Grid>
 
-            {/* Create Playlist Dialog */}
-            <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
-                <DialogTitle>Create New Playlist</DialogTitle>
-                <DialogContent>
-                    <TextField
-                        label="Playlist Name"
-                        variant="outlined"
-                        fullWidth
-                        value={newPlaylistName}
-                        onChange={(e) => setNewPlaylistName(e.target.value)}
-                        sx={{ mb: 2 }}
-                    />
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => setDialogOpen(false)} color="primary">
-                        Cancel
-                    </Button>
-                    <Button onClick={handleCreatePlaylist} color="primary">
-                        Create
-                    </Button>
-                </DialogActions>
-            </Dialog>
+        {/* Create Playlist Dialog */}
+        <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
+            <DialogTitle>Create New Playlist</DialogTitle>
+            <DialogContent>
+                <TextField
+                    label="Playlist Name"
+                    variant="outlined"
+                    fullWidth
+                    value={newPlaylistName}
+                    onChange={(e) => setNewPlaylistName(e.target.value)}
+                    sx={{ mb: 2 }}
+                />
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={() => setDialogOpen(false)} color="primary">Cancel</Button>
+                <Button onClick={handleCreatePlaylist} color="primary">Create</Button>
+            </DialogActions>
+        </Dialog>
 
-            {/* Snackbar for notifications */}
-            <Snackbar
-                open={snackbarOpen}
-                autoHideDuration={3000}
-                onClose={() => setSnackbarOpen(false)}
-                message={snackbarMessage}
-            />
-        </Container>
-    );
+        {/* Snackbar for notifications */}
+        <Snackbar
+            open={snackbarOpen}
+            autoHideDuration={3000}
+            onClose={() => setSnackbarOpen(false)}
+            message={snackbarMessage}
+        />
+    </Container>
+);
 };
 
 export default Playlist;

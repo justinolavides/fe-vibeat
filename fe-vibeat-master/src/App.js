@@ -14,7 +14,10 @@ import Playlist from './Playlist';
 import DownloadPage from './DownloadPage';
 import SearchResults from './SearchResults';
 import UploadMusic from './UploadMusic';
+<<<<<<< HEAD
 import MusicPage from './MusicPage'; // Import MusicPage component
+=======
+>>>>>>> 8cd6bdb (the home,settings,download)
 import './App.css';
 
 function App() {
@@ -38,13 +41,16 @@ function App() {
                 <Route path="/music-dashboard" element={<MusicDashboard userProfile={userProfile} />} />
                 <Route path="/profile" element={<Profile onProfileUpdate={handleProfileUpdate} userProfile={userProfile} />} />
                 <Route path="/settings" element={<Settings />} />
-                <Route path="/playlist" element={<Playlist />} />
+                <Route path="/playlist" element={<Playlist />} />  {/* Ensure this route is defined */}
                 <Route path="/forgot-password" element={<ForgotPassword />} />
                 <Route path="/reset-password/:token" element={<ResetPassword />} />
                 <Route path="/downloads" element={<DownloadPage />} />
                 <Route path="/search" element={<SearchResults />} />
                 <Route path="/upload" element={<UploadMusic />} />
+<<<<<<< HEAD
                 <Route path="/music" element={<MusicPage />} />  {/* Added MusicPage Route */}
+=======
+>>>>>>> 8cd6bdb (the home,settings,download)
                 <Route path="*" element={<Navigate to="/" />} />
             </Routes>
         </Router>

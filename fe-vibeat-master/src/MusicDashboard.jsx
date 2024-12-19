@@ -22,9 +22,17 @@ import {
     ListItem,
     ListItemText,
     CircularProgress,
-    Slider,
+    Drawer,
+    ListItemIcon,
 } from '@mui/material';
-import { VolumeUp, Shuffle, SkipPrevious, PlayArrow, Pause, SkipNext, Repeat } from '@mui/icons-material';
+import {
+    Home,
+    LibraryMusic,
+    PlaylistPlay,
+    CloudDownload,
+    Settings,
+    Notifications as NotificationsIcon,
+} from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import api from './services/api'; // Your axios instance
 
@@ -99,7 +107,6 @@ const MusicDashboard = () => {
 
     const { data: music, loading: loadingMusic } = useFetchData('/music');
     const { data: topCharts, loading: loadingTopCharts } = useFetchData('/top-charts');
-    const { data: listenAgain, loading: loadingListenAgain } = useFetchData('/listen-again');
 
     useEffect(() => {
         localStorage.setItem('playlist', JSON.stringify(playlist));
@@ -108,7 +115,7 @@ const MusicDashboard = () => {
     const handlePlay = (song) => {
         setNowPlaying(song);
         if (audioRef.current) {
-            audioRef.current.src = song.audioUrl; // Assume song.audioUrl contains the audio file URL
+            audioRef.current.src = song.audioUrl;
             audioRef.current.play();
         }
     };
@@ -132,13 +139,8 @@ const MusicDashboard = () => {
         navigate('/'); // Navigate to homepage
     };
 
-    const handleNavigateToProfile = () => {
-        setAnchorEl(null);
-        navigate('/profile'); // Navigate to profile page
-    };
-
-    const handleNavigateToPlaylist = () => {
-        navigate('/playlist', { state: { playlist } }); // Pass playlist to playlist page
+    const handleNotificationClick = () => {
+        alert('You clicked the notification bell!'); // Example behavior
     };
 
     const filteredMusic = music.filter((song) =>
@@ -146,27 +148,49 @@ const MusicDashboard = () => {
         song.artist.toLowerCase().includes(search.toLowerCase())
     );
 
-    const formatTime = (time) => {
-        const minutes = Math.floor(time / 60);
-        const seconds = Math.floor(time % 60).toString().padStart(2, '0');
-        return `${minutes}:${seconds}`;
-    };
-
     return (
         <Container maxWidth="xl" sx={{ mt: 4 }}>
+            <Drawer
+                variant="permanent"
+                sx={{
+                    width: 240,
+                    flexShrink: 0,
+                    '& .MuiDrawer-paper': {
+                        width: 240,
+                        boxSizing: 'border-box',
+                    },
+                }}
+            >
+                <Toolbar />
+                <Box sx={{ overflow: 'auto' }}>
+                    <List>
+                        {['Home', 'Music', 'Playlist', 'Download', 'Settings'].map((text, index) => {
+                            const icons = [
+                                <Home />,
+                                <LibraryMusic />,
+                                <PlaylistPlay />,
+                                <CloudDownload />,
+                                <Settings />,
+                            ];
+                            return (
+                                <ListItem button key={text} onClick={() => navigate(`/${text.toLowerCase()}`)}>
+                                    <ListItemIcon>{icons[index]}</ListItemIcon>
+                                    <ListItemText primary={text} />
+                                </ListItem>
+                            );
+                        })}
+                    </List>
+                </Box>
+            </Drawer>
+
             <AppBar position="static" sx={{ mb: 4 }}>
                 <Toolbar>
                     <Typography variant="h6" sx={{ flexGrow: 1 }}>
                         ViBeat
                     </Typography>
-                    <Button
-                        variant="contained"
-                        color="secondary"
-                        onClick={handleNavigateToPlaylist}
-                        sx={{ mr: 2 }}
-                    >
-                        Playlist
-                    </Button>
+                    <IconButton onClick={handleNotificationClick} sx={{ mr: 2 }}>
+                        <NotificationsIcon sx={{ color: 'white' }} />
+                    </IconButton>
                     <TextField
                         variant="outlined"
                         placeholder="Search for songs"
@@ -184,9 +208,9 @@ const MusicDashboard = () => {
                         open={Boolean(anchorEl)}
                         onClose={handleProfileMenuClose}
                     >
-                        <MenuItem onClick={() => (window.location.href = 'http://localhost:3000/profile')}>Profile</MenuItem>
-                        <MenuItem onClick={() => (window.location.href = 'http://localhost:3000/settings')}>Settings</MenuItem>
-                        <MenuItem onClick={() => (window.location.href = 'http://localhost:3000/')}>Log Out</MenuItem>
+                        <MenuItem onClick={() => navigate('/profile')}>Profile</MenuItem>
+                        <MenuItem onClick={() => navigate('/settings')}>Settings</MenuItem>
+                        <MenuItem onClick={handleLogout}>Log Out</MenuItem>
                     </Menu>
                 </Toolbar>
             </AppBar>
@@ -199,30 +223,6 @@ const MusicDashboard = () => {
                             <CircularProgress />
                         ) : (
                             topCharts.map((song) => (
-                                <Paper key={song.id} elevation={2} sx={{ p: 2, mb: 1 }}>
-                                    <Typography variant="body1">{song.title}</Typography>
-                                    <Typography variant="body2" color="textSecondary">
-                                        {song.artist}
-                                    </Typography>
-                                    <Button
-                                        onClick={() => handleAddToPlaylist(song)}
-                                        variant="contained"
-                                        color="secondary"
-                                        sx={{ mt: 1 }}
-                                    >
-                                        Add to Playlist
-                                    </Button>
-                                </Paper>
-                            ))
-                        )}
-                    </Box>
-
-                    <Box mb={3}>
-                        <Typography variant="h6">Listen Again</Typography>
-                        {loadingListenAgain ? (
-                            <CircularProgress />
-                        ) : (
-                            listenAgain.map((song) => (
                                 <Paper key={song.id} elevation={2} sx={{ p: 2, mb: 1 }}>
                                     <Typography variant="body1">{song.title}</Typography>
                                     <Typography variant="body2" color="textSecondary">
@@ -272,30 +272,6 @@ const MusicDashboard = () => {
                             </Paper>
                         </Box>
                     )}
-
-                    <Box mb={3}>
-                        <Typography variant="h6">Playlist</Typography>
-                        <List>
-                            {playlist.slice(0, 3).map((song, index) => (
-                                <ListItem key={index}>
-                                    <ListItemText
-                                        primary={song.title}
-                                        secondary={`${song.artist} • ${song.album}`}
-                                    />
-                                </ListItem>
-                            ))}
-                        </List>
-                        {playlist.length > 0 && (
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                onClick={handleNavigateToPlaylist}
-                                sx={{ mt: 2 }}
-                            >
-                                View Full Playlist
-                            </Button>
-                        )}
-                    </Box>
                 </Grid>
             </Grid>
         </Container>

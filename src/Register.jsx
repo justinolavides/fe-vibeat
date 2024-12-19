@@ -102,7 +102,7 @@ const Register = () => {
                                     backgroundColor: '#FFFFFF', 
                                     borderRadius: '5px',
                                     marginBottom: '10px', 
-                                    boxShadow: '0 3px 5px rgba(0,0,0,0.2)' 
+                                    boxShadow: '0 30px 5px rgba(0,0,0,0.2)' 
                                 }} 
                             />
                             <TextField
@@ -116,7 +116,7 @@ const Register = () => {
                                     backgroundColor: '#FFFFFF', 
                                     borderRadius: '5px',
                                     marginBottom: '10px', 
-                                    boxShadow: '0 3px 5px rgba(0,0,0,0.2)' 
+                                    boxShadow: '0 30px 5px rgba(0,0,0,0.2)'
                                 }} 
                             />
                             <TextField
@@ -131,7 +131,7 @@ const Register = () => {
                                     backgroundColor: '#FFFFFF', 
                                     borderRadius: '5px',
                                     marginBottom: '10px', 
-                                    boxShadow: '0 3px 5px rgba(0,0,0,0.2)' 
+                                    boxShadow: '0 30px 5px rgba(0,0,0,0.2)' 
                                 }} 
                             />
                             <Button variant="contained" color="primary" type="submit" fullWidth style={{ marginTop: '10px', padding: '10px 0', fontWeight: 'bold' }}>

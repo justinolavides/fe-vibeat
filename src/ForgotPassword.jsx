@@ -11,10 +11,13 @@ const ForgotPassword = () => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+        setError('');
+        setMessage('');
         try {
             const response = await api.post('/forgot-password', { email });
-            if (response.status === 200) {
-                navigate('/reset-password');
+            if (response.data.success) {
+                setMessage('Password reset link sent to your email.');
+                setError('');
             } else {
                 setError(response.data.message);
                 setMessage('');

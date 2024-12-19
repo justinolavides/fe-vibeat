@@ -3,6 +3,7 @@ import { TextField, Button, Container, Typography, Paper, Box, Link } from '@mui
 import { useParams, useNavigate } from 'react-router-dom';
 import api from './services/api';
 
+
 const ResetPassword = () => {
     const { token } = useParams();
     const [password, setPassword] = useState('');
@@ -14,14 +15,14 @@ const ResetPassword = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         if (password !== passwordConfirmation) {
-            setError('Failed to reset password. Please try again.');
+            setError('Passwords do not match. Please try again.');
             setMessage('');
             return;
         }
 
         try {
             const response = await api.post('/reset-password', { token, password, password_confirmation: passwordConfirmation });
-            if (response.status === 200) {
+            if (response.data.success) {
                 setMessage('Password has been reset successfully. Returning to the login page...');
                 setError('');
                 setTimeout(() => navigate('/login'), 3000);

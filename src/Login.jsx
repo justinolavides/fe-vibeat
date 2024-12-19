@@ -1,5 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { TextField, Button, Container, Typography, Paper, Checkbox, FormControlLabel, Link, Box, AppBar, Toolbar } from '@mui/material';
+import {
+    TextField,
+    Button,
+    Container,
+    Typography,
+    Paper,
+    Checkbox,
+    FormControlLabel,
+    Link,
+    Box,
+    AppBar,
+    Toolbar,
+    CircularProgress,
+} from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import api from './services/api'; // Import the centralized Axios instance
 
@@ -9,6 +22,7 @@ const Home = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false); // Loading state
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -19,15 +33,31 @@ const Home = () => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+        setError(''); // Clear previous errors
+        setLoading(true); // Start loading
         try {
             const response = await api.post('/login', { email, password });
 
             if (response.data.token) {
                 localStorage.setItem('auth_token', response.data.token);
-                navigate('/admin');  // Redirect after login
+                // Check the user's role and navigate accordingly 
+                const userRole = response.data.role;
+
+                if (userRole === 'admin') {
+                    navigate('/admin');
+                } else if (userRole === 'user') {
+                    navigate('/music-dashboard');
+                } else {
+                    navigate('/');
+                }
+
+            } else {
+                setError('Invalid login credentials'); // Show error if no token returned
             }
         } catch (error) {
-            setError('Invalid login credentials');
+            setError('An error occurred during login');
+        } finally {
+            setLoading(false); // Stop loading
         }
     };
 
@@ -39,27 +69,30 @@ const Home = () => {
         setShowLogin(false);
     };
 
+    const handleAboutClick = () => {
+        const aboutSection = document.getElementById('about-section');
+        if (aboutSection) {
+            aboutSection.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
+
     return (
         <>
             <AppBar position="static" style={{ backgroundColor: 'rgba(50, 0, 0, 0.3)' }}>
                 <Toolbar>
-                    <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} onClick={handleHomeClick} style={{ cursor: 'pointer' }}>
+                    <Typography
+                        variant="h6"
+                        component="div"
+                        sx={{ flexGrow: 1 }}
+                        onClick={handleHomeClick}
+                        style={{ cursor: 'pointer' }}
+                    >
                         <span style={{ color: '#FFFFFF', fontWeight: 'bold', textShadow: '4px 2px', fontSize: '50px' }}>VIB</span>
                         <span style={{ color: '#000000', fontWeight: 'bold', textShadow: '4px 2px', fontSize: '50px' }}>EAT</span>
                     </Typography>
                     <Button color="inherit" onClick={handleHomeClick}>Home</Button>
-                    <Button 
-                        color="inherit" 
-                        onClick={() => {
-                            const aboutSection = document.getElementById('about-section');
-                            if (aboutSection) {
-                                aboutSection.scrollIntoView({ behavior: 'smooth' });
-                            }
-                        }}
-                    >
-                        About
-                    </Button>
                     <Button color="inherit" onClick={() => navigate('/contact')}>Contact</Button>
+                    <Button color="inherit" onClick={handleAboutClick}>About</Button>
                     <Button color="inherit" onClick={handleLoginClick}>Login</Button>
                 </Toolbar>
             </AppBar>
@@ -69,12 +102,12 @@ const Home = () => {
                     height: 'calc(100vh - 64px)', // Adjust height to account for AppBar
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'space-between',  // Changed to space-between to push content apart
-                    backgroundImage: 'url(/back.png)', 
+                    justifyContent: 'space-between',
+                    backgroundImage: 'url(/back.png)',
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                     position: 'relative',
-                    padding: '0 50px',  // Adjust padding for spacing
+                    padding: '0 50px',
                 }}
             >
                 <div
@@ -84,11 +117,11 @@ const Home = () => {
                         left: 0,
                         width: '100%',
                         height: '100%',
-                        background: 'rgba(0, 0, 0, 0.7)', 
+                        background: 'rgba(0, 0, 0, 0.7)',
                         zIndex: 1
                     }}
                 />
-                
+
                 {!showLogin && (
                     <Container maxWidth="sm" style={{ zIndex: 2 }}>
                         <Typography variant="h3" component="h1" gutterBottom style={{ textAlign: 'center', fontFamily: 'Times New Roman, Times, serif' }}>
@@ -105,11 +138,11 @@ const Home = () => {
 
                 {showLogin && (
                     <Container maxWidth="sm" style={{ zIndex: 2 }}>
-                        <Paper 
-                            elevation={5} 
-                            style={{ 
-                                padding: '30px', 
-                                background: 'linear-gradient(to right, #8e2de2, #4a00e0)', 
+                        <Paper
+                            elevation={5}
+                            style={{
+                                padding: '30px',
+                                background: 'linear-gradient(to right, #8e2de2, #4a00e0)',
                                 borderRadius: '5px',
                                 color: '#FFFFFF',
                             }}
@@ -125,11 +158,11 @@ const Home = () => {
                                     onChange={(e) => setEmail(e.target.value)}
                                     margin="normal"
                                     variant="outlined"
-                                    style={{ 
-                                        backgroundColor: '#FFFFFF', 
+                                    style={{
+                                        backgroundColor: '#FFFFFF',
                                         borderRadius: '5px',
-                                        marginBottom: '15px', 
-                                        boxShadow: '0 30px 5px rgba(0,0,0,0.2)' 
+                                        marginBottom: '15px',
+                                        boxShadow: '0 30px 5px rgba(0,0,0,0.2)'
                                     }}
                                 />
                                 <TextField
@@ -140,11 +173,11 @@ const Home = () => {
                                     onChange={(e) => setPassword(e.target.value)}
                                     margin="normal"
                                     variant="outlined"
-                                    style={{ 
-                                        backgroundColor: '#FFFFFF', 
+                                    style={{
+                                        backgroundColor: '#FFFFFF',
                                         borderRadius: '5px',
-                                        marginBottom: '15px', 
-                                        boxShadow: '0 30px 5px rgba(0,0,0,0.2)' 
+                                        marginBottom: '15px',
+                                        boxShadow: '0 30px 5px rgba(0,0,0,0.2)'
                                     }}
                                 />
                                 <FormControlLabel
@@ -152,9 +185,19 @@ const Home = () => {
                                     label="Remember me"
                                     style={{ marginTop: '15px', color: '#FFFFFF' }}
                                 />
-                                <Button variant="contained" color="primary" type="submit" fullWidth style={{ marginTop: '20px', padding: '10px 0', fontWeight: 'bold' }}>
-                                    Login
+
+                                {/* Submit Button with Loading */}
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    type="submit"
+                                    fullWidth
+                                    style={{ marginTop: '20px', padding: '10px 0', fontWeight: 'bold' }}
+                                    disabled={loading} // Disable while loading
+                                >
+                                    {loading ? <CircularProgress size={24} style={{ color: '#FFFFFF' }} /> : 'Login'}
                                 </Button>
+
                                 {error && <Typography color="error" style={{ marginTop: '10px' }}>{error}</Typography>}
                                 <div style={{ marginTop: '15px', display: 'flex', justifyContent: 'space-between' }}>
                                     <Link component="button" variant="body2" style={{ color: '#FFFFFF' }} onClick={() => navigate('/register')}>
@@ -171,7 +214,7 @@ const Home = () => {
 
                 {!showLogin && (
                     <img
-                        src="/HomeLogo.png" 
+                        src="/HomeLogo.png"
                         alt="Home Logo"
                         style={{
                             zIndex: 2,
@@ -190,7 +233,7 @@ const Home = () => {
                         About Us
                     </Typography>
                     <Typography variant="body1">
-                        ViBeat is your ultimate destination for music management and user interaction. Our platform provides artists and fans with the tools they need to manage their music, connect with each other, and enjoy a seamless musical experience.
+                    At ViBeat Music, we are passionate about simplifying your music experience. As a cutting-edge multimedia web application, we empower users to seamlessly download and save music from a variety of sources. Whether you're looking for high-quality MP3 audio files or different formats and resolutions for offline enjoyment, ViBeat Music delivers a user-friendly solution tailored to your needs. Our mission is to bring your favorite tunes closer to you—anytime, anywhere.
                     </Typography>
                 </div>
             )}

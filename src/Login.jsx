@@ -233,7 +233,7 @@ const Home = () => {
                         About Us
                     </Typography>
                     <Typography variant="body1">
-                        ViBeat is your ultimate destination for music management and user interaction. Our platform provides artists and fans with the tools they need to manage their music, connect with each other, and enjoy a seamless musical experience.
+                    At ViBeat Music, we are passionate about simplifying your music experience. As a cutting-edge multimedia web application, we empower users to seamlessly download and save music from a variety of sources. Whether you're looking for high-quality MP3 audio files or different formats and resolutions for offline enjoyment, ViBeat Music delivers a user-friendly solution tailored to your needs. Our mission is to bring your favorite tunes closer to you—anytime, anywhere.
                     </Typography>
                 </div>
             )}

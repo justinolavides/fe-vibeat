@@ -13,7 +13,8 @@ import Settings from './Settings';
 import Playlist from './Playlist';
 import DownloadPage from './DownloadPage';
 import SearchResults from './SearchResults';
-import UploadMusic from './UploadMusic'; // Import UploadMusic component
+import UploadMusic from './UploadMusic';
+import MusicPage from './MusicPage'; // Import MusicPage component
 import './App.css';
 
 function App() {
@@ -42,7 +43,8 @@ function App() {
                 <Route path="/reset-password/:token" element={<ResetPassword />} />
                 <Route path="/downloads" element={<DownloadPage />} />
                 <Route path="/search" element={<SearchResults />} />
-                <Route path="/upload" element={<UploadMusic />} />  {/* Added UploadMusic Route */}
+                <Route path="/upload" element={<UploadMusic />} />
+                <Route path="/music" element={<MusicPage />} />  {/* Added MusicPage Route */}
                 <Route path="*" element={<Navigate to="/" />} />
             </Routes>
         </Router>

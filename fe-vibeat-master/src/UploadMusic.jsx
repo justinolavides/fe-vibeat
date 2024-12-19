@@ -151,9 +151,18 @@ const UploadMusic = () => {
                         <Avatar src="/static/images/avatar/1.jpg" />
                     </IconButton>
                     <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleProfileMenuClose}>
-                        <MenuItem>Profile</MenuItem>
-                        <MenuItem>Settings</MenuItem>
-                        <MenuItem>Log Out</MenuItem>
+                        <MenuItem onClick={() => { window.location.href = 'http://localhost:3000/profile'; }}>
+                            Profile
+                        </MenuItem>
+                        <MenuItem onClick={() => { window.location.href = 'http://localhost:3000/settings'; }}>
+                            Settings
+                        </MenuItem>
+                        <MenuItem onClick={() => { 
+                            // Perform logout logic here (if any), then redirect
+                            window.location.href = 'http://localhost:3000/';
+                        }}>
+                            Log Out
+                        </MenuItem>
                     </Menu>
                 </Toolbar>
             </AppBar>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
     Container, AppBar, Toolbar, Typography, TextField, Grid, Paper,
-    Button, List, ListItem, ListItemText, IconButton, Box, Slider, Menu, MenuItem, Avatar
+    Button, IconButton, Box, Slider, Menu, MenuItem, Avatar
 } from '@mui/material';
 import { PlayArrow, Pause, Add, VolumeUp } from '@mui/icons-material';
 
@@ -12,7 +12,7 @@ const mockSearchResults = [
 ];
 
 const SearchResults = () => {
-    const [searchResults, setSearchResults] = useState(mockSearchResults);
+    const [searchResults] = useState(mockSearchResults);
     const [search, setSearch] = useState('');
     const [nowPlaying, setNowPlaying] = useState(null);
     const [progress, setProgress] = useState(0);
@@ -74,9 +74,17 @@ const SearchResults = () => {
                         <Avatar src="/static/images/avatar/1.jpg" />
                     </IconButton>
                     <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleProfileMenuClose}>
-                        <MenuItem>Profile</MenuItem>
-                        <MenuItem>Settings</MenuItem>
-                        <MenuItem>Log Out</MenuItem>
+                        <MenuItem onClick={() => { window.location.href = 'http://localhost:3000/profile'; }}>
+                            Profile
+                        </MenuItem>
+                        <MenuItem onClick={() => { window.location.href = 'http://localhost:3000/settings'; }}>
+                            Settings
+                        </MenuItem>
+                        <MenuItem onClick={() => {
+                            window.location.href = 'http://localhost:3000/';
+                        }}>
+                            Log Out
+                        </MenuItem>
                     </Menu>
                 </Toolbar>
             </AppBar>

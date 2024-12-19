@@ -184,9 +184,9 @@ const MusicDashboard = () => {
                         open={Boolean(anchorEl)}
                         onClose={handleProfileMenuClose}
                     >
-                        <MenuItem onClick={handleNavigateToProfile}>Profile</MenuItem>
-                        <MenuItem onClick={handleProfileMenuClose}>Settings</MenuItem>
-                        <MenuItem onClick={handleLogout}>Log Out</MenuItem>
+                        <MenuItem onClick={() => (window.location.href = 'http://localhost:3000/profile')}>Profile</MenuItem>
+                        <MenuItem onClick={() => (window.location.href = 'http://localhost:3000/settings')}>Settings</MenuItem>
+                        <MenuItem onClick={() => (window.location.href = 'http://localhost:3000/')}>Log Out</MenuItem>
                     </Menu>
                 </Toolbar>
             </AppBar>

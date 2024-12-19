@@ -153,9 +153,9 @@ const Playlist = () => {
                         <Avatar src="/static/images/avatar/1.jpg" />
                     </IconButton>
                     <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleProfileMenuClose}>
-                        <MenuItem>Profile</MenuItem>
-                        <MenuItem>Settings</MenuItem>
-                        <MenuItem>Log Out</MenuItem>
+                        <MenuItem onClick={() => { window.location.href = 'http://localhost:3000/profile'; }}> Profile </MenuItem>
+                        <MenuItem onClick={() => { window.location.href = 'http://localhost:3000/settings'; }}> Settings </MenuItem>
+                        <MenuItem onClick={() => { /* Perform logout logic here */ window.location.href = 'http://localhost:3000/'; }}> Log Out </MenuItem>
                     </Menu>
                 </Toolbar>
             </AppBar>
@@ -210,7 +210,6 @@ const Playlist = () => {
                             }}>
                                 <Typography variant="h6">{nowPlaying.title}</Typography>
                                 <Typography variant="body2" color="textSecondary">{nowPlaying.artist}</Typography>
-                                {/* If it's a YouTube link, embed the video */}
                                 {nowPlaying.url.includes('youtube.com') ? (
                                     <iframe
                                         width="100%"

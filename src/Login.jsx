@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { TextField, Button, Container, Typography, Paper, Checkbox, FormControlLabel, Link, Box, AppBar, Toolbar } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
-import api from './services/api'; // Import the centralized Axios instance
+import { AuthContext } from './AuthContext';
+import api from './services/api';
 
 const Home = () => {
     const location = useLocation();
-    const [showLogin, setShowLogin] = useState(false); // State to control login form visibility
+    const { setUser } = useContext(AuthContext);
+    const [showLogin, setShowLogin] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -22,14 +24,23 @@ const Home = () => {
         setError(''); // Clear previous errors
         try {
             const response = await api.post('/login', { email, password });
+            console.log("API response:", response.data);
 
             if (response.data.token) {
                 localStorage.setItem('auth_token', response.data.token);
-                navigate('/admin');  // Redirect after successful login
+                const user = { role: response.data.role }; // Create a user object with the role
+                setUser(user);
+
+                if (response.data.role === 'admin') {
+                    navigate('/admin');
+                } else if (response.data.role === 'user') {
+                    navigate('/music-dashboard');  // Redirect user role to /music
+                }
             } else {
-                setError('Invalid login credentials'); // Show error if no token returned
+                setError('Invalid login credentials');
             }
         } catch (error) {
+            console.error("Login error:", error.response ? error.response.data : error);
             setError('An error occurred during login');
         }
     };
@@ -61,12 +72,12 @@ const Home = () => {
                     height: 'calc(100vh - 64px)', // Adjust height to account for AppBar
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'space-between',  // Changed to space-between to push content apart
+                    justifyContent: 'space-between',
                     backgroundImage: 'url(/back.png)', 
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                     position: 'relative',
-                    padding: '0 50px',  // Adjust padding for spacing
+                    padding: '0 50px',
                 }}
             >
                 <div

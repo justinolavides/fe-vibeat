@@ -15,8 +15,6 @@ const avatarOptions = [
     'https://randomuser.me/api/portraits/lego/7.jpg',  // Female 2
     'https://randomuser.me/api/portraits/lego/8.jpg',  // Female 3
     'https://randomuser.me/api/portraits/lego/9.jpg',
-    'https://robohash.org/:random.png'
-    //   // Female 4
 ];
 
 const Profile = ({ onProfileUpdate }) => {

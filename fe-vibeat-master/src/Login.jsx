@@ -76,7 +76,7 @@ const Home = () => {
                         left: 0,
                         width: '100%',
                         height: '100%',
-                        background: 'rgba(113, 13, 13, 0.39)', 
+                        background: 'rgba(21, 1, 1, 0.39)', 
                         zIndex: 1
                     }}
                 />

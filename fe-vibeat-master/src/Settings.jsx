@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Button, Box, Paper, Typography, Dialog, DialogTitle, DialogContent, DialogActions, IconButton, Backdrop } from '@mui/material';
+import {
+    Container, Button, Box, Paper, Typography, Dialog, DialogTitle, DialogContent, DialogActions, IconButton, Backdrop,
+    TextField, CircularProgress
+} from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import CloseIcon from '@mui/icons-material/Close';
-import TextField from '@mui/material/TextField';
-import CircularProgress from '@mui/material/CircularProgress';
 
 const Settings = () => {
     const navigate = useNavigate();
@@ -20,8 +21,12 @@ const Settings = () => {
     };
 
     const handleChangePassword = () => {
-        // Add your password change logic here
-        setOpenPassword(false);
+        if (newPassword === confirmPassword) {
+            // Add your password change logic here
+            setOpenPassword(false);
+        } else {
+            alert("Passwords do not match!");
+        }
     };
 
     const toggleNotifications = () => {
@@ -64,7 +69,7 @@ const Settings = () => {
 
     return (
         <Container maxWidth="md" sx={{ mt: 4, minHeight: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center', color: themeStyles[theme].color }}>
-            <Paper elevation={3} sx={{ p: 5, borderRadius: '15px', color: themeStyles[theme].color, backgroundColor: 'rgba(255, 255, 255, 0.7)' }}>
+            <Paper elevation={3} sx={{ p: 5, borderRadius: '15px', color: themeStyles[theme].color, background: 'linear-gradient(to right,rgb(15, 15, 16),rgb(208, 204, 218))', }}>
                 <Typography variant="h4" gutterBottom sx={{ textAlign: 'center', fontWeight: 'bold' }}>Settings</Typography>
                 <Box display="flex" flexDirection="column" alignItems="center" gap={3}>
                     <Button
@@ -119,24 +124,26 @@ const Settings = () => {
                     </IconButton>
                 </DialogTitle>
                 <DialogContent>
-                    <TextField
-                        margin="dense"
-                        label="New Password"
-                        type="password"
-                        fullWidth
-                        variant="outlined"
-                        value={newPassword}
-                        onChange={(e) => setNewPassword(e.target.value)}
-                    />
-                    <TextField
-                        margin="dense"
-                        label="Confirm Password"
-                        type="password"
-                        fullWidth
-                        variant="outlined"
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                    />
+                    <Box display="flex" flexDirection="column" gap={2}>
+                        <TextField
+                            margin="dense"
+                            label="New Password"
+                            type="password"
+                            fullWidth
+                            variant="outlined"
+                            value={newPassword}
+                            onChange={(e) => setNewPassword(e.target.value)}
+                        />
+                        <TextField
+                            margin="dense"
+                            label="Confirm Password"
+                            type="password"
+                            fullWidth
+                            variant="outlined"
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                        />
+                    </Box>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleChangePassword} sx={{ backgroundColor: '#34C759', color: '#FFFFFF' }}>

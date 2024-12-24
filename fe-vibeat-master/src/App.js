@@ -46,6 +46,8 @@ function App() {
                 <Route path="/upload" element={<UploadMusic />} />
                 <Route path="/music" element={<MusicPage />} />  {/* Added MusicPage Route */}
                 <Route path="*" element={<Navigate to="/" />} />
+                <Route path="/" element={<MusicDashboard />} />
+                <Route path="/downloads" element={<DownloadPage />} />
             </Routes>
         </Router>
     );

@@ -53,9 +53,9 @@ const ForgotPassword = () => {
                 <Paper
                     elevation={5}
                     sx={{
-                        padding: '30px',
-                        borderRadius: '15px',
-                        background: 'linear-gradient(to right, #8e2de2, #4a00e0)', // Gradient background
+                        padding: '50px',
+                        borderRadius: '5px',
+                        background: 'linear-gradient(to right,rgb(15, 15, 16),rgb(208, 204, 218))', // Gradient background
                         color: '#FFFFFF',
                         textAlign: 'center',
                     }}

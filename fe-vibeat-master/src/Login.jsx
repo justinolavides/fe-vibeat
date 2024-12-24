@@ -25,7 +25,7 @@ const Home = () => {
 
             if (response.data.token) {
                 localStorage.setItem('auth_token', response.data.token);
-                navigate('/admin');  // Redirect after successful login
+                navigate(response.data.redirect_url);  // Redirect based on user role
             } else {
                 setError('Invalid login credentials'); // Show error if no token returned
             }
@@ -44,7 +44,7 @@ const Home = () => {
 
     return (
         <>
-            <AppBar position="static" style={{ backgroundColor: 'rgba(50, 0, 0, 0.3)' }}>
+            <AppBar position="static" style={{ backgroundColor: 'rgba(92, 86, 102, 0.3)' }}>
                 <Toolbar>
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} onClick={handleHomeClick} style={{ cursor: 'pointer' }}>
                         <span style={{ color: '#FFFFFF', fontWeight: 'bold', textShadow: '4px 2px', fontSize: '50px' }}>VIB</span>
@@ -76,7 +76,7 @@ const Home = () => {
                         left: 0,
                         width: '100%',
                         height: '100%',
-                        background: 'rgba(113, 13, 13, 0.39)', 
+                        background: 'rgba(36, 23, 23, 0.39)', 
                         zIndex: 1
                     }}
                 />
@@ -100,8 +100,8 @@ const Home = () => {
                         <Paper 
                             elevation={5} 
                             style={{ 
-                                padding: '30px', 
-                                background: 'linear-gradient(to right, #8e2de2, #4a00e0)', 
+                                padding: '50px', 
+                                background: 'linear-gradient(to right,rgb(15, 15, 16),rgb(208, 204, 218))', 
                                 borderRadius: '5px',
                                 color: '#FFFFFF',
                             }}

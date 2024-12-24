@@ -169,7 +169,7 @@ const UploadMusic = () => {
 
             {/* Upload Section */}
             <Paper elevation={3} sx={{
-                p: 4, textAlign: 'center', background: 'linear-gradient(to right, #ff69b4, #ffcc00)', borderRadius: 2
+                p: 4, textAlign: 'center', background: 'linear-gradient(to right,rgb(15, 15, 16),rgb(93, 85, 112))', borderRadius: 2
             }}>
                 <CloudUpload sx={{ fontSize: 50, color: '#007bff' }} />
                 <Typography variant="h6" sx={{ mt: 2 }}>Drag and drop files to upload</Typography>

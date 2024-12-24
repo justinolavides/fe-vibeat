@@ -21,7 +21,7 @@ const Register = () => {
 
             if (response.data.token) {
                 localStorage.setItem('auth_token', response.data.token);
-                navigate('/admin');  // Redirect after registration
+                navigate('/music-dashboard');  // Redirect to music dashboard after registration
             }
         } catch (error) {
             if (error.response && error.response.data) {
@@ -80,9 +80,9 @@ const Register = () => {
                     <Paper 
                         elevation={5} 
                         style={{ 
-                            padding: '20px', 
-                            background: 'linear-gradient(to right, #8e2de2, #4a00e0)', 
-                            borderRadius: '10px',
+                            padding: '50px', 
+                            background: 'linear-gradient(to right,rgb(15, 15, 16),rgb(208, 204, 218))', 
+                            borderRadius: '5px',
                             color: '#FFFFFF',
                         }}
                     >
@@ -102,7 +102,7 @@ const Register = () => {
                                     backgroundColor: '#FFFFFF', 
                                     borderRadius: '5px',
                                     marginBottom: '10px', 
-                                    boxShadow: '0 3px 5px rgba(0,0,0,0.2)' 
+                                    boxShadow: '0 30px 5px rgba(0,0,0,0.2)' 
                                 }} 
                             />
                             <TextField
@@ -116,7 +116,7 @@ const Register = () => {
                                     backgroundColor: '#FFFFFF', 
                                     borderRadius: '5px',
                                     marginBottom: '10px', 
-                                    boxShadow: '0 3px 5px rgba(0,0,0,0.2)' 
+                                    boxShadow: '0 30px 5px rgba(0,0,0,0.2)' 
                                 }} 
                             />
                             <TextField
@@ -131,7 +131,7 @@ const Register = () => {
                                     backgroundColor: '#FFFFFF', 
                                     borderRadius: '5px',
                                     marginBottom: '10px', 
-                                    boxShadow: '0 3px 5px rgba(0,0,0,0.2)' 
+                                    boxShadow: '0 30px 5px rgba(0,0,0,0.2)' 
                                 }} 
                             />
                             <Button variant="contained" color="primary" type="submit" fullWidth style={{ marginTop: '10px', padding: '10px 0', fontWeight: 'bold' }}>

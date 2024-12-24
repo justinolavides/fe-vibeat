@@ -89,7 +89,7 @@ const Profile = ({ onProfileUpdate }) => {
     }
 
     return (
-        <Container maxWidth="md" sx={{ mt: 4, background: 'linear-gradient(to right, #f39c12, #f1c40f)', padding: 4, borderRadius: '15px' }}>
+        <Container maxWidth="md" sx={{ mt: 4, background: 'linear-gradient(to right,rgb(31, 31, 46),rgb(35, 34, 38))', padding: 7, borderRadius: '10px' }}>
             <Box display="flex" flexDirection="row" justifyContent="space-between" alignItems="flex-start">
                 {/* Left Section */}
                 <Box display="flex" flexDirection="column" alignItems="center" width="40%">

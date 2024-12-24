@@ -31,14 +31,13 @@ const Contact = () => {
 
     useEffect(() => {
         if (showLogin && loginRef.current) {
-            console.log('Scrolling to login form');
             loginRef.current.scrollIntoView({ behavior: 'smooth' });
         }
     }, [showLogin]);
 
     return (
         <>
-            <AppBar position="static">
+            <AppBar position="static" style={{ background: '#1c1c1e' }}>
                 <Toolbar>
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>
                         ViBeat
@@ -50,13 +49,58 @@ const Contact = () => {
                 </Toolbar>
             </AppBar>
 
-            <Container style={{ padding: '50px', color: '#FFFFFF', backgroundColor: '#444', marginTop: '20px' }}>
-                <Typography variant="h4" component="h2" gutterBottom>
+            <Container style={{ padding: '50px', color: '#FFFFFF', backgroundColor: '#2c2c2e', marginTop: '20px', borderRadius: '8px' }}>
+                <Typography variant="h4" component="h2" gutterBottom style={{ textAlign: 'center', fontWeight: 'bold' }}>
                     Contact Us
                 </Typography>
-                <Typography variant="body1">
-                    Address: 27 13 Lowe Haven, Tel: 111 343 43 43, Email: business@info.com
+                <Typography variant="body1" style={{ textAlign: 'center', marginBottom: '20px' }}>
+                    We're here to assist you! Reach out to us via the following methods:
                 </Typography>
+
+                {/* Contact List */}
+                <Box style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <Typography variant="h6" component="h3" gutterBottom style={{ fontWeight: 'bold' }}>
+                        Email:
+                    </Typography>
+                    <Typography variant="body1">General Inquiries: justinolavides8@gmail.com</Typography>
+                    <Typography variant="body1">Support: Genesis@gmail.com</Typography>
+                    <Typography variant="body1">Sales: ViBeat@gmail.com</Typography>
+                    
+                    <Typography variant="h6" component="h3" gutterBottom style={{ fontWeight: 'bold', marginTop: '20px' }}>
+                        Phone:
+                    </Typography>
+                    <Typography variant="body1">General Inquiries: +1-800-123-4567</Typography>
+                    <Typography variant="body1">Support: +1-800-987-6543</Typography>
+                    <Typography variant="body1">Sales: +1-800-567-1234</Typography>
+                    
+                    <Typography variant="h6" component="h3" gutterBottom style={{ fontWeight: 'bold', marginTop: '20px' }}>
+                        Address:
+                    </Typography>
+                    <Typography variant="body1">ViBeat Music Company</Typography>
+                    <Typography variant="body1">Bugo</Typography>
+                    <Typography variant="body1">Cagayan de Oro City, 9000</Typography>
+                    <Typography variant="body1">Philippines</Typography>
+                    
+                    <Typography variant="h6" component="h3" gutterBottom style={{ fontWeight: 'bold', marginTop: '20px' }}>
+                        Business Hours:
+                    </Typography>
+                    <Typography variant="body1">Monday - Friday: 9:00 AM to 6:00 PM</Typography>
+                    <Typography variant="body1">Saturday: 10:00 AM to 4:00 PM</Typography>
+                    <Typography variant="body1">Sunday: Closed</Typography>
+                    
+                    <Typography variant="h6" component="h3" gutterBottom style={{ fontWeight: 'bold', marginTop: '20px' }}>
+                        Follow Us:
+                    </Typography>
+                    <Link href="https://www.facebook.com/profile.php?id=61570904286413" target="_blank" style={{ color: '#1da1f2', textDecoration: 'none' }}>
+                        Facebook
+                    </Link>
+                    <Link href="https://www.twitter.com/example" target="_blank" style={{ color: '#1da1f2', textDecoration: 'none', marginTop: '10px' }}>
+                        Twitter
+                    </Link>
+                    <Link href="https://www.instagram.com/example" target="_blank" style={{ color: '#1da1f2', textDecoration: 'none', marginTop: '10px' }}>
+                        Instagram
+                    </Link>
+                </Box>
             </Container>
 
             {showLogin && (

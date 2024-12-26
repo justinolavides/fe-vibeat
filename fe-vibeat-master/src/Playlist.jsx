@@ -6,9 +6,6 @@ import {
 import { Add, Delete, PlayArrow, Pause, VolumeUp, PlaylistAdd, PlaylistPlay } from '@mui/icons-material';
 
 const mockMusic = [
-    { id: 1, title: 'Song A', artist: 'Artist 1', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3' },
-    { id: 2, title: 'Song B', artist: 'Artist 2', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3' },
-    { id: 3, title: 'Song C', artist: 'Artist 3', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3' },
     { id: 4, title: 'Making Love Out of Nothing at All', artist: 'Air Supply', url: 'https://www.youtube.com/watch?v=pdRVD0OJg3c' },
     { id: 5, title: 'APT.', artist: 'BrunoMars & Rose', url: 'https://www.youtube.com/watch?v=i_SsnRdgitA' },
     { id: 6, title: 'BoB Nothin On You', artist: ' Bruno Mars Lyrics Bruno Mars Jason Mraz', url: 'https://www.youtube.com/watch?v=-5heGER5xwc' },

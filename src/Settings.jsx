@@ -198,6 +198,8 @@ const Settings = () => {
                             Solarized Dark
                         </Button>
                     </Box>
+
+                    
                 </DialogContent>
             </Dialog>
 

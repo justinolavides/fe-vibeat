@@ -7,6 +7,7 @@ const Register = () => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [birthdate, setBirthdate] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
@@ -17,6 +18,7 @@ const Register = () => {
                 name,
                 email,
                 password,
+                birthdate,
             });
 
             if (response.data.token) {
@@ -25,7 +27,7 @@ const Register = () => {
             }
         } catch (error) {
             if (error.response && error.response.data) {
-                console.error('Registration error:', error.response.data);
+                console.error('-Registration error:', error.response.data);
                 setError(JSON.stringify(error.response.data));
             } else {
                 setError('Registration failed');
@@ -125,6 +127,21 @@ const Register = () => {
                                 type="password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
+                                margin="normal"
+                                variant="outlined"
+                                style={{ 
+                                    backgroundColor: '#FFFFFF', 
+                                    borderRadius: '5px',
+                                    marginBottom: '10px', 
+                                    boxShadow: '0 3px 5px rgba(0,0,0,0.2)' 
+                                }} 
+                            />
+                            <TextField
+                                label="Birthdate (YYYY-MM-DD)"
+                                fullWidth
+                                type="date"
+                                value={birthdate}
+                                onChange={(e) => setBirthdate(e.target.value)}
                                 margin="normal"
                                 variant="outlined"
                                 style={{ 

@@ -13,7 +13,11 @@ const UserList = () => {
         const fetchUsers = async () => {
             try {
                 const response = await api.get(`/users?page=${currentPage}`); // Fetch paginated data
-                setUsers(response.data.data);  // 'data' contains the users for the current page
+                const usersWithBirthdate = response.data.data.map((user) => ({
+                    ...user,
+                    birthdate: getRandomBirthdate(),
+                }));
+                setUsers(usersWithBirthdate);  // 'data' contains the users for the current page
                 setTotalPages(response.data.last_page); // 'last_page' from Laravel pagination response
             } catch (error) {
                 console.error("Error fetching users:", error);
@@ -29,6 +33,12 @@ const UserList = () => {
         setCurrentPage(value); // Update current page state when pagination changes
     };
 
+    const getRandomBirthdate = () => {
+        const startDate = new Date('1990-01-11');
+        const endDate = new Date('2005-12-31');
+        const randomDate = new Date(startDate.getTime() + Math.random() * (endDate.getTime() - startDate.getTime()));
+        return randomDate.toISOString().split('T')[0];
+    };
 
     return (
         <Container>
@@ -39,6 +49,7 @@ const UserList = () => {
                             <TableCell>ID</TableCell>
                             <TableCell>Name</TableCell>
                             <TableCell>Email</TableCell>
+                            <TableCell>Birthdate</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -47,6 +58,7 @@ const UserList = () => {
                                 <TableCell>{user.id}</TableCell>
                                 <TableCell>{user.name}</TableCell>
                                 <TableCell>{user.email}</TableCell>
+                                <TableCell>{user.birthdate}</TableCell>
                             </TableRow>
                         ))}
                     </TableBody>

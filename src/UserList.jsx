@@ -189,7 +189,25 @@ const UserList = () => {
                 onClose={handleSnackbarClose}
                 message={snackbarMessage}
             />
-
+            <Dialog
+                open={confirmDialogOpen}
+                onClose={handleDialogClose}
+            >
+                <DialogTitle>Confirm Deletion</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Are you sure you want to delete this user? This action cannot be undone.
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleDialogClose} color="primary">
+                        Cancel
+                    </Button>
+                    <Button onClick={handleDeleteConfirm} color="secondary">
+                        Delete
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Container>
     );
 };

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableRow, Paper, Container, Pagination, CircularProgress, Typography, TextField, IconButton, Snackbar, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, MenuItem, Select, FormControl, InputLabel, AppBar, Toolbar } from '@mui/material';
-import { Delete as DeleteIcon, Edit as EditIcon, Add as AddIcon, Sort as SortIcon, Logout as LogoutIcon } from '@mui/icons-material';
+import { Delete as DeleteIcon, Edit as EditIcon, Sort as SortIcon, Logout as LogoutIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import api from './services/api'; // Import the centralized Axios instance
 

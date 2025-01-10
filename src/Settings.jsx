@@ -62,8 +62,6 @@ const Settings = () => {
     };
 
     useEffect(() => {
-        document.body.style.background = themeStyles[theme].background;
-        document.body.style.color = themeStyles[theme].color;
         document.body.style.overflow = 'hidden';  // Disable scrolling on the body
     }, [theme]);
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
-    Container, AppBar, Toolbar, Typography, Grid, Box, Button, TextField, IconButton, Menu, MenuItem, Avatar, Paper, Slider
+    Container, AppBar, Toolbar, Typography, Box, Button, TextField, IconButton, Menu, MenuItem, Avatar, Paper, Slider
 } from '@mui/material';
 import { CloudUpload, PlayArrow, Pause, VolumeUp, MoreVert, PlaylistAdd, FileDownload, Delete, Edit, Share, Shuffle, SkipPrevious, SkipNext, Repeat } from '@mui/icons-material'; // Added missing imports for Shuffle, SkipPrevious, SkipNext, and Repeat
 
@@ -34,14 +34,6 @@ const UploadMusic = () => {
 
     const handleProfileMenuOpen = (event) => setAnchorEl(event.currentTarget);
     const handleProfileMenuClose = () => setAnchorEl(null);
-
-    const handleUpload = () => {
-        // Handle the file upload logic here
-        files.forEach(file => {
-            console.log('Uploading:', file.name);
-            // Add your upload logic here
-        });
-    };
 
     const handlePlayPause = (file) => {
         if (nowPlaying?.name === file.name) {
